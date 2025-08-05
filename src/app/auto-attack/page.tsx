@@ -10,8 +10,9 @@ import { NetworkList } from '@/components/network-list';
 import { AttackPanel } from '@/components/attack-panel';
 import { ModeSelectionDialog } from '@/components/mode-selection-dialog';
 import { Button } from '@/components/ui/button';
-import { Loader2, Play, Pause, WifiOff, Terminal } from 'lucide-react';
+import { Loader2, Play, Pause, WifiOff, Terminal, Wifi, ShieldX } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { Badge } from '@/components/ui/badge';
 
 export default function AutoAttackPage() {
     const [networks, setNetworks] = useState<WifiNetwork[]>([]);
@@ -26,13 +27,15 @@ export default function AutoAttackPage() {
     const [connectedNetwork, setConnectedNetwork] = useState<WifiNetwork | null>(null);
     const [connection, setConnection] = useState<ConnectionStatus>({ ssid: null, mode: 'idle' });
     
-    const [logs, setLogs] = useState<string[]>(['Daemon started. Initializing...']);
+    const [logs, setLogs] = useState<string[]>(['Daemon started. Waiting for local terminal server...']);
     const logContainerRef = useRef<HTMLDivElement>(null);
     
     const { toast } = useToast();
+    const ws = useRef<WebSocket | null>(null);
+    const [isTerminalConnected, setIsTerminalConnected] = useState(false);
 
     const addLog = (message: string) => {
-        setLogs(prev => [...prev.slice(-100), `${new Date().toLocaleTimeString()}: ${message}`]);
+        setLogs(prev => [...prev.slice(-200), `${new Date().toLocaleTimeString()}: ${message}`]);
     };
 
     useEffect(() => {
@@ -40,6 +43,37 @@ export default function AutoAttackPage() {
             logContainerRef.current.scrollTop = logContainerRef.current.scrollHeight;
         }
     }, [logs]);
+
+    useEffect(() => {
+        function connect() {
+            ws.current = new WebSocket('ws://localhost:8080');
+
+            ws.current.onopen = () => {
+                addLog('✅ Terminal server connected.');
+                setIsTerminalConnected(true);
+            };
+
+            ws.current.onmessage = (event) => {
+                addLog(`[TERMINAL] ${event.data}`);
+            };
+
+            ws.current.onclose = () => {
+                addLog('❌ Terminal server disconnected. Retrying in 5 seconds...');
+                setIsTerminalConnected(false);
+                setTimeout(connect, 5000);
+            };
+
+            ws.current.onerror = (error) => {
+                addLog('❌ WebSocket error. Make sure the local server is running.');
+                ws.current?.close();
+            };
+        }
+        connect();
+        
+        return () => {
+            ws.current?.close();
+        }
+    }, []);
 
     const fetchNetworks = async () => {
         addLog("Scanning for networks...");
@@ -54,7 +88,7 @@ export default function AutoAttackPage() {
     };
     
     const runAttackCycle = async () => {
-        if (!isDaemonRunning || currentTarget) return;
+        if (!isDaemonRunning || currentTarget || !isTerminalConnected) return;
 
         await fetchNetworks();
 
@@ -65,17 +99,19 @@ export default function AutoAttackPage() {
             setCurrentTarget(nextTarget);
             setIsAttackPanelOpen(true);
         } else {
-            addLog("No new targets found. Will rescan in 10 seconds.");
-            setTimeout(runAttackCycle, 10000);
+            addLog("No new valid targets. Will rescan in 10 seconds.");
+            if (isDaemonRunning) {
+                setTimeout(runAttackCycle, 10000);
+            }
         }
     };
 
     useEffect(() => {
-        if (isDaemonRunning && !currentTarget) {
+        if (isDaemonRunning && !currentTarget && isTerminalConnected) {
             const timer = setTimeout(runAttackCycle, 2000); // Initial delay
             return () => clearTimeout(timer);
         }
-    }, [isDaemonRunning, networks, currentTarget, attackedBssids]);
+    }, [isDaemonRunning, networks, currentTarget, attackedBssids, isTerminalConnected]);
 
 
     const handleAttackComplete = (password: string | null) => {
@@ -102,6 +138,10 @@ export default function AutoAttackPage() {
                 title: "Connection Established",
                 description: `Connected to ${connectedNetwork.ssid} in ${mode} mode.`,
             });
+             if(ws.current && ws.current.readyState === WebSocket.OPEN) {
+                 addLog(`Requesting MITM mode for ${connectedNetwork.ssid}`);
+                 ws.current.send(`connect_mitm ${connectedNetwork.ssid}`);
+             }
         }
         setIsModeDialogOpen(false);
     };
@@ -113,11 +153,19 @@ export default function AutoAttackPage() {
         });
         setConnection({ ssid: null, mode: 'idle' });
         setConnectedNetwork(null);
-        // Optionally restart the daemon
-        // setIsDaemonRunning(true);
     }
     
     const renderContent = () => {
+      if (!isTerminalConnected) {
+         return (
+             <div className="flex flex-col justify-center items-center py-10 text-center">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                <p className="mt-4 text-muted-foreground">Waiting for connection to local terminal server...</p>
+                <p className="text-sm text-muted-foreground">Please start the python server on your machine.</p>
+            </div>
+         )
+      }
+      
       if (isLoading) {
         return (
           <div className="flex justify-center items-center py-10">
@@ -144,10 +192,16 @@ export default function AutoAttackPage() {
             <Header connection={connection} onDisconnect={handleDisconnect} />
             <div className="flex justify-between items-center mb-4">
                  <h2 className="text-2xl font-bold tracking-tight">Auto Attack Daemon</h2>
-                 <Button onClick={() => setIsDaemonRunning(!isDaemonRunning)} variant="outline" disabled={isLoading || connection.ssid !== null}>
-                    {isDaemonRunning ? <Pause className="mr-2"/> : <Play className="mr-2"/>}
-                    {isDaemonRunning ? 'Pause Daemon' : 'Resume Daemon'}
-                 </Button>
+                 <div className="flex items-center gap-4">
+                    <Badge variant={isTerminalConnected ? 'default' : 'destructive'} className="gap-2">
+                        {isTerminalConnected ? <Wifi className="w-4 h-4"/> : <ShieldX className="w-4 h-4"/>}
+                        Terminal {isTerminalConnected ? 'Connected' : 'Disconnected'}
+                    </Badge>
+                     <Button onClick={() => setIsDaemonRunning(!isDaemonRunning)} variant="outline" disabled={isLoading || connection.ssid !== null || !isTerminalConnected}>
+                        {isDaemonRunning ? <Pause className="mr-2"/> : <Play className="mr-2"/>}
+                        {isDaemonRunning ? 'Pause Daemon' : 'Resume Daemon'}
+                     </Button>
+                 </div>
             </div>
             
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -155,9 +209,9 @@ export default function AutoAttackPage() {
                     {renderContent()}
                 </div>
                 <div className="lg:col-span-1 bg-card border rounded-lg p-4">
-                    <h3 className="font-semibold text-lg mb-2 flex items-center"><Terminal className="mr-2"/>Live Logs</h3>
-                    <div ref={logContainerRef} className="h-64 bg-black/80 rounded-md p-3 text-sm font-mono text-green-400 overflow-y-auto">
-                        {logs.map((log, i) => <p key={i} className="whitespace-pre-wrap leading-tight">&gt; {log}</p>)}
+                    <h3 className="font-semibold text-lg mb-2 flex items-center"><Terminal className="mr-2"/>Live Terminal Output</h3>
+                    <div ref={logContainerRef} className="h-[400px] bg-black/90 rounded-md p-3 text-sm font-mono text-green-400 overflow-y-auto">
+                        {logs.map((log, i) => <p key={i} className="whitespace-pre-wrap leading-tight font-code">{log.startsWith('[TERMINAL]') ? <span className="text-cyan-400">{log}</span> : `> ${log}`}</p>)}
                     </div>
                 </div>
             </div>
@@ -169,6 +223,7 @@ export default function AutoAttackPage() {
                     onClose={() => { /* Cannot be closed manually in daemon mode */ }}
                     onSuccess={handleAttackComplete}
                     isDaemon={true}
+                    websocket={ws.current}
                 />
             )}
             

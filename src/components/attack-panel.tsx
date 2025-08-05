@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from "react";
@@ -19,7 +20,7 @@ import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { KeyRound, ShieldCheck, Loader2, ShieldX, Terminal } from "lucide-react";
+import { KeyRound, ShieldCheck, Loader2, ShieldX, Terminal, Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface AttackPanelProps {
@@ -28,9 +29,10 @@ interface AttackPanelProps {
   onClose: () => void;
   onSuccess: (password: string | null) => void;
   isDaemon?: boolean;
+  websocket: WebSocket | null;
 }
 
-export function AttackPanel({ network, isOpen, onClose, onSuccess, isDaemon = false }: AttackPanelProps) {
+export function AttackPanel({ network, isOpen, onClose, onSuccess, isDaemon = false, websocket }: AttackPanelProps) {
   const [knownInformation, setKnownInformation] = useState("");
   const [passwordHint, setPasswordHint] = useState("");
   const [candidates, setCandidates] = useState<string[]>([]);
@@ -56,6 +58,7 @@ export function AttackPanel({ network, isOpen, onClose, onSuccess, isDaemon = fa
     setCandidates([]);
     setAttackResult(null);
     setCrackedPassword(null);
+    setEquivalentCommand("");
 
     const result = await getPasswordCandidates({
       targetName: network.ssid,
@@ -70,60 +73,53 @@ export function AttackPanel({ network, isOpen, onClose, onSuccess, isDaemon = fa
           setTimeout(() => onSuccess(null), 1500);
       }
     } else {
-      // Create a temporary wordlist file for the command
       const wordlistFileName = `temp_wordlist_${network.bssid.replace(/:/g, '')}.txt`;
-      setEquivalentCommand(
-`# 1. Capture WPA/WPA2 Handshake
-airodump-ng -c ${network.channel} --bssid ${network.bssid} -w capture wlan0mon
-
-# 2. Save AI candidates to a wordlist file
-echo "${result.passwordCandidates.join('\\n')}" > ${wordlistFileName}
-
-# 3. Run aircrack-ng with the AI-generated wordlist
-aircrack-ng -w ${wordlistFileName} -b ${network.bssid} capture-01.cap`
-      );
+      const command = `crack_wpa "${network.bssid}" "${network.channel}" "${result.passwordCandidates.join(',')}"`;
+      setEquivalentCommand(command);
       setCandidates(result.passwordCandidates);
       if (isDaemon) {
-        handleCrack(result.passwordCandidates);
+        handleCrack(command, result.passwordCandidates);
       }
     }
   };
 
-  const handleCrack = (generatedCandidates: string[]) => {
+  const handleCrack = (command: string, generatedCandidates: string[]) => {
     if (generatedCandidates.length === 0) {
       if (isDaemon) onSuccess(null);
       return;
     }
     
-    setIsCracking(true);
-    setCrackProgress(0);
-    setAttackResult(null);
+    if (websocket && websocket.readyState === WebSocket.OPEN) {
+        setIsCracking(true);
+        setAttackResult(null);
+        websocket.send(command);
+        
+        const messageListener = (event: MessageEvent) => {
+            const data = event.data.toString();
+            if(data.startsWith("CRACK_PROGRESS")) {
+                const progress = parseInt(data.split(" ")[1], 10);
+                setCrackProgress(progress);
+            } else if (data.startsWith("CRACK_SUCCESS")) {
+                const password = data.substring(data.indexOf(" ") + 1);
+                setCrackedPassword(password);
+                setAttackResult('success');
+                setIsCracking(false);
+                setTimeout(() => onSuccess(password), 2000);
+                websocket.removeEventListener('message', messageListener);
+            } else if (data.startsWith("CRACK_FAILURE")) {
+                setAttackResult('fail');
+                setIsCracking(false);
+                setTimeout(() => onSuccess(null), 2000);
+                websocket.removeEventListener('message', messageListener);
+            }
+        };
 
-    const totalDuration = (Math.random() * 4 + 4) * 1000; // 4-8 seconds
-    const interval = 50;
-    const steps = totalDuration / interval;
-    let currentStep = 0;
-    
-    const crackSucceeds = Math.random() < 0.20; // 20% chance of success
+        websocket.addEventListener('message', messageListener);
 
-    const crackInterval = setInterval(() => {
-      currentStep++;
-      setCrackProgress((currentStep / steps) * 100);
-
-      if (currentStep >= steps) {
-        clearInterval(crackInterval);
-        setIsCracking(false);
-        if (crackSucceeds) {
-            const successfulPassword = generatedCandidates[Math.floor(Math.random() * generatedCandidates.length)];
-            setCrackedPassword(successfulPassword);
-            setAttackResult('success');
-            setTimeout(() => onSuccess(successfulPassword), 1500);
-        } else {
-            setAttackResult('fail');
-            setTimeout(() => onSuccess(null), 1500);
-        }
-      }
-    }, interval);
+    } else {
+        toast({ variant: "destructive", title: "Connection Error", description: "WebSocket is not connected to the terminal server." });
+        if(isDaemon) onSuccess(null);
+    }
   };
 
   const resetState = () => {
@@ -143,7 +139,7 @@ aircrack-ng -w ${wordlistFileName} -b ${network.bssid} capture-01.cap`
     if (isCracking) {
       return (
         <div className="space-y-2">
-            <p className="text-sm text-muted-foreground">Cracking in progress... Trying {candidates.length} passwords.</p>
+            <p className="text-sm text-muted-foreground">Cracking in progress... Relaying to local terminal.</p>
             <Progress value={crackProgress} />
         </div>
       );
@@ -160,13 +156,14 @@ aircrack-ng -w ${wordlistFileName} -b ${network.bssid} capture-01.cap`
       return (
         <div className="text-destructive font-semibold flex items-center justify-center p-2 bg-destructive/10 rounded-md">
             <ShieldX className="mr-2 h-5 w-5"/>
-            <p>Attack failed. No valid password found.</p>
+            <p>Attack failed. No valid password found by local terminal.</p>
         </div>
       )
     }
     return (
-        <Button onClick={() => handleCrack(candidates)} className="w-full bg-accent hover:bg-accent/90">
-            Start Cracking
+        <Button onClick={() => handleCrack(equivalentCommand, candidates)} className="w-full bg-accent hover:bg-accent/90" disabled={!equivalentCommand || !websocket}>
+            <Zap className="mr-2"/>
+            Execute Attack in Terminal
         </Button>
     )
   }
@@ -180,11 +177,11 @@ aircrack-ng -w ${wordlistFileName} -b ${network.bssid} capture-01.cap`
           </DialogTitle>
            {isDaemon ? (
              <DialogDescription>
-                Daemon is automatically attacking this network. Process cannot be interrupted.
+                Daemon is automatically attacking via the local terminal. Process cannot be interrupted.
              </DialogDescription>
            ) : (
             <DialogDescription>
-                Use AI to generate password candidates and attempt to crack the network.
+                Use AI to generate candidates, then execute the cracking command in your local terminal.
             </DialogDescription>
            )}
         </DialogHeader>
@@ -247,7 +244,7 @@ aircrack-ng -w ${wordlistFileName} -b ${network.bssid} capture-01.cap`
                 
                 {equivalentCommand && (
                 <div className="space-y-2 pt-4">
-                    <h4 className="font-semibold flex items-center"><Terminal className="mr-2"/>Equivalent Terminal Commands</h4>
+                    <h4 className="font-semibold flex items-center"><Terminal className="mr-2"/>Remote Execution Command</h4>
                     <pre className="bg-black/80 rounded-md p-3 text-sm font-mono text-green-400 overflow-x-auto text-wrap">
                         <code>{equivalentCommand}</code>
                     </pre>
@@ -257,7 +254,7 @@ aircrack-ng -w ${wordlistFileName} -b ${network.bssid} capture-01.cap`
                 {!isDaemon ? renderCrackStatus() : (
                     isCracking ? (
                          <div className="space-y-2">
-                            <p className="text-sm text-muted-foreground">Daemon cracking in progress...</p>
+                            <p className="text-sm text-muted-foreground">Daemon cracking in progress via local terminal...</p>
                             <Progress value={crackProgress} />
                         </div>
                     ) : (
