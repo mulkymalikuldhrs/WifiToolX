@@ -20,6 +20,7 @@ import { Progress } from "@/components/ui/progress";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { KeyRound, ShieldCheck, Loader2 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface AttackPanelProps {
   network: WifiNetwork;
