@@ -40,15 +40,17 @@ export default function AutoAttackPage() {
     const [isOnline, setIsOnline] = useState(false);
 
      useEffect(() => {
-        setIsOnline(navigator.onLine);
-        const handleOnline = () => setIsOnline(true);
-        const handleOffline = () => setIsOnline(false);
-        window.addEventListener('online', handleOnline);
-        window.addEventListener('offline', handleOffline);
-        return () => {
-            window.removeEventListener('online', handleOnline);
-            window.removeEventListener('offline', handleOffline);
-        };
+        if (typeof window !== 'undefined') {
+            setIsOnline(navigator.onLine);
+            const handleOnline = () => setIsOnline(true);
+            const handleOffline = () => setIsOnline(false);
+            window.addEventListener('online', handleOnline);
+            window.addEventListener('offline', handleOffline);
+            return () => {
+                window.removeEventListener('online', handleOnline);
+                window.removeEventListener('offline', handleOffline);
+            };
+        }
     }, []);
 
     const addLog = (message: string, fromTerminal = false) => {
@@ -185,7 +187,7 @@ export default function AutoAttackPage() {
              <Card className="flex flex-col justify-center items-center py-10 text-center">
                 <Loader2 className="h-8 w-8 animate-spin text-primary" />
                 <p className="mt-4 text-muted-foreground">Waiting for connection to local terminal server...</p>
-                <p className="text-sm text-muted-foreground">Please start the python server on your machine.</p>
+                <p className="text-sm text-muted-foreground">Please start `local_server.py` in a separate terminal.</p>
             </Card>
          )
       }
