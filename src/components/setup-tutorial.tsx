@@ -46,7 +46,11 @@ export function SetupTutorial() {
                                 <code>{npmCommand}</code>
                                 <Button size="icon" variant="ghost" onClick={() => copyToClipboard(npmCommand)}><Copy className="w-4 h-4"/></Button>
                              </pre>
-                             <p className="text-muted-foreground mt-2">This will install the required Node packages (like Next.js and `npm-run-all`) and the Python library (`websockets`) needed for the local server.</p>
+                             <p className="text-muted-foreground mt-2">This will install the required Node packages (like Next.js and `npm-run-all`). You also need the `websockets` library for Python. You can install it using pip:</p>
+                             <pre className="bg-black/80 rounded-md p-3 text-sm font-mono text-green-400 overflow-x-auto text-wrap flex justify-between items-center">
+                                <code>pip install websockets</code>
+                                <Button size="icon" variant="ghost" onClick={() => copyToClipboard('pip install websockets')}><Copy className="w-4 h-4"/></Button>
+                             </pre>
                         </AccordionContent>
                     </AccordionItem>
                     <AccordionItem value="item-3">
