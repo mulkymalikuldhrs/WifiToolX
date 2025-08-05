@@ -9,6 +9,7 @@ import { Input } from './ui/input';
 import { ScrollArea } from './ui/scroll-area';
 import { Badge } from './ui/badge';
 import { cn } from '@/lib/utils';
+import { Avatar, AvatarFallback } from './ui/avatar';
 
 interface ChatbotProps {
   isOpen: boolean;
@@ -92,15 +93,29 @@ export function Chatbot({ isOpen, onClose, isOnline }: ChatbotProps) {
       <ScrollArea className="flex-1 p-4" ref={scrollAreaRef}>
         <div className="flex flex-col gap-4">
           {messages.map((msg, index) => (
-            <div key={index} className={cn("flex items-start gap-3", msg.role === 'user' ? 'justify-end' : 'justify-start')}>
-               {msg.role === 'model' && <Bot className="w-6 h-6 text-primary flex-shrink-0 mt-1" />}
-               <div className={cn("p-3 rounded-lg max-w-xs md:max-w-sm break-words", msg.role === 'user' ? 'bg-primary text-primary-foreground' : 'bg-secondary')}>
+            <div key={index} className={cn(
+              "flex items-end gap-2",
+              msg.role === 'user' ? 'justify-end' : 'justify-start'
+            )}>
+               {msg.role === 'model' && (
+                 <Avatar className="h-8 w-8">
+                    <AvatarFallback className="bg-primary text-primary-foreground">
+                        <Bot className="w-5 h-5"/>
+                    </AvatarFallback>
+                 </Avatar>
+               )}
+               <div className={cn(
+                "p-3 rounded-2xl max-w-xs md:max-w-sm break-words", 
+                msg.role === 'user' 
+                  ? 'bg-primary text-primary-foreground rounded-br-none' 
+                  : 'bg-secondary rounded-bl-none'
+               )}>
                  <p className="text-sm">{msg.content}</p>
               </div>
             </div>
           ))}
            {isLoading && (
-            <div className="flex items-center gap-2 text-muted-foreground">
+            <div className="flex items-center gap-2 text-muted-foreground pl-12">
               <Loader2 className="w-4 h-4 animate-spin" />
               <span>Thinking...</span>
             </div>
