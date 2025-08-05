@@ -1,8 +1,13 @@
-# 🧠 WiFiHunterX – Ultimate WiFi Pentest Daemon Tool
+<div align="center">
+  <img src="https://placehold.co/1200x400.png" alt="WiFiHunterX Cover" data-ai-hint="hacker network">
+  <h1 align="center">🧠 WiFiHunterX – Ultimate WiFi Pentest Daemon Tool</h1>
+</div>
 
 **WiFiHunterX** adalah dasbor antarmuka web yang canggih untuk mengotomatiskan dan mengelola serangan keamanan jaringan WiFi. Proyek ini secara unik menjembatani kenyamanan antarmuka pengguna grafis (GUI) modern dengan kekuatan eksekusi baris perintah (CLI) mentah, memungkinkan pengguna untuk mengontrol alat pentesting yang berjalan di mesin lokal mereka langsung dari browser.
 
 Aplikasi ini bertindak sebagai "pusat komando" untuk **daemon serangan otomatis**, yang secara mandiri memindai jaringan, memilih target, menggunakan AI untuk menghasilkan kata sandi potensial, dan mengirimkan perintah serangan nyata ke server terminal lokal melalui WebSocket.
+
+Dibuat oleh: **Mulky Malikul Dhaher**
 
 ---
 
@@ -51,23 +56,29 @@ Komunikasi antara keduanya terjadi secara real-time melalui WebSockets.
 
 Untuk menjalankan proyek ini, Anda memerlukan Node.js dan Python 3 terinstal.
 
-1.  **Install Dependensi Node.js**:
+1.  **Kloning Repositori**:
+    ```bash
+    git clone https://github.com/mulkymalikuldhrs/WifiToolX.git
+    cd WifiToolX
+    ```
+
+2.  **Install Dependensi Node.js**:
     ```bash
     npm install
     ```
 
-2.  **Install Dependensi Python**:
+3.  **Install Dependensi Python**:
     ```bash
-    pip install websockets
+    pip install -r requirements.txt
     ```
 
-3.  **Jalankan Proyek**:
+4.  **Jalankan Proyek**:
     Gunakan satu perintah ini untuk menjalankan server frontend dan backend secara bersamaan.
     ```bash
     npm run dev
     ```
 
-4.  **Buka Aplikasi**:
+5.  **Buka Aplikasi**:
     Buka browser Anda dan navigasikan ke `http://localhost:9002` (atau port apa pun yang Anda konfigurasikan).
 
 > **Peringatan Keamanan**: Server Python lokal (`local_server.py`) dirancang untuk tujuan pendidikan dan untuk digunakan dalam lingkungan yang terkendali dan tepercaya. **Jangan pernah** mengeksposnya ke jaringan yang tidak tepercaya karena dapat mengeksekusi perintah sewenang-wenang.

@@ -14,7 +14,7 @@ import { Button } from "./ui/button"
 export function SetupTutorial() {
     const { toast } = useToast()
     const npmInstallCommand = "npm install"
-    const pipInstallCommand = "pip install websockets"
+    const pipInstallCommand = "pip install -r requirements.txt"
     const runCommand = "npm run dev"
     
     const copyToClipboard = (text: string, label: string) => {
@@ -36,7 +36,7 @@ export function SetupTutorial() {
                     <AccordionItem value="item-1">
                         <AccordionTrigger>Step 1: The Concept</AccordionTrigger>
                         <AccordionContent className="text-muted-foreground space-y-2">
-                           <p>This web UI is a remote control. It sends commands to a Python server running on your local machine, which then executes real penetration testing tools.</p>
+                           <p>This web UI is a remote control. It sends commands to a Python server (`local_server.py`) running on your machine, which then executes real penetration testing tools.</p>
                            <p>We've integrated the startup process, so you only need one command to run everything.</p>
                         </AccordionContent>
                     </AccordionItem>
@@ -48,7 +48,7 @@ export function SetupTutorial() {
                                 <code>{npmInstallCommand}</code>
                                 <Button size="icon" variant="ghost" onClick={() => copyToClipboard(npmInstallCommand, "NPM install command")}><Copy className="w-4 h-4"/></Button>
                              </div>
-                             <p className="text-muted-foreground">Next, ensure you have the required Python library (`websockets`):</p>
+                             <p className="text-muted-foreground">Next, install the required Python libraries using the `requirements.txt` file:</p>
                               <div className="bg-black/50 rounded-md p-3 font-mono text-sm text-primary/80 flex justify-between items-center">
                                 <code>{pipInstallCommand}</code>
                                 <Button size="icon" variant="ghost" onClick={() => copyToClipboard(pipInstallCommand, "Pip install command")}><Copy className="w-4 h-4"/></Button>

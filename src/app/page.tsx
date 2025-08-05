@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { List, Bot, Settings, BookText, Wifi } from 'lucide-react';
+import { List, Bot, BookText, Wifi } from 'lucide-react';
 import { SetupTutorial } from '@/components/setup-tutorial';
 
 export default function Home() {
