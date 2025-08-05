@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { List } from 'lucide-react';
+import { List, Bot } from 'lucide-react';
 
 export default function Home() {
   return (
@@ -15,15 +15,15 @@ export default function Home() {
           <CardTitle className="text-center">MENU</CardTitle>
         </CardHeader>
         <CardContent className="flex flex-col gap-4">
-          <Button asChild size="lg" className="justify-start">
+          <Button asChild size="lg" className="justify-start" disabled>
             <Link href="/manual-scan">
               <List className="mr-2" />
               Jalankan Scan Manual
             </Link>
           </Button>
-          <Button asChild size="lg" className="justify-start" disabled>
+          <Button asChild size="lg" className="justify-start">
             <Link href="/auto-attack">
-              <List className="mr-2" />
+              <Bot className="mr-2" />
               Full Auto Attack (Daemon)
             </Link>
           </Button>

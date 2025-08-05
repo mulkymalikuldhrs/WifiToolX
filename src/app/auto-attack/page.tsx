@@ -1,0 +1,185 @@
+
+"use client";
+
+import { useState, useEffect, useRef } from 'react';
+import type { WifiNetwork, ConnectionStatus } from '@/lib/types';
+import { getWifiNetworks } from '@/app/actions';
+
+import { Header } from '@/components/header';
+import { NetworkList } from '@/components/network-list';
+import { AttackPanel } from '@/components/attack-panel';
+import { ModeSelectionDialog } from '@/components/mode-selection-dialog';
+import { Button } from '@/components/ui/button';
+import { Loader2, Play, Pause, WifiOff, Terminal } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
+
+export default function AutoAttackPage() {
+    const [networks, setNetworks] = useState<WifiNetwork[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [isDaemonRunning, setIsDaemonRunning] = useState(true);
+    const [attackedBssids, setAttackedBssids] = useState<Set<string>>(new Set());
+    
+    const [currentTarget, setCurrentTarget] = useState<WifiNetwork | null>(null);
+    const [isAttackPanelOpen, setIsAttackPanelOpen] = useState(false);
+    
+    const [isModeDialogOpen, setIsModeDialogOpen] = useState(false);
+    const [connectedNetwork, setConnectedNetwork] = useState<WifiNetwork | null>(null);
+    const [connection, setConnection] = useState<ConnectionStatus>({ ssid: null, mode: 'idle' });
+    
+    const [logs, setLogs] = useState<string[]>(['Daemon started. Initializing...']);
+    const logContainerRef = useRef<HTMLDivElement>(null);
+    
+    const { toast } = useToast();
+
+    const addLog = (message: string) => {
+        setLogs(prev => [...prev.slice(-100), `${new Date().toLocaleTimeString()}: ${message}`]);
+    };
+
+    useEffect(() => {
+        if (logContainerRef.current) {
+            logContainerRef.current.scrollTop = logContainerRef.current.scrollHeight;
+        }
+    }, [logs]);
+
+    const fetchNetworks = async () => {
+        addLog("Scanning for networks...");
+        const result = await getWifiNetworks(networks);
+        if ('error' in result) {
+            addLog(`Scan Error: ${result.error}`);
+        } else {
+            setNetworks(result.networks);
+            addLog(`Scan complete. Found ${result.networks.length} networks.`);
+            if (isLoading) setIsLoading(false);
+        }
+    };
+    
+    const runAttackCycle = async () => {
+        if (!isDaemonRunning || currentTarget) return;
+
+        await fetchNetworks();
+
+        const nextTarget = networks.find(n => !attackedBssids.has(n.bssid) && n.security !== 'Open');
+
+        if (nextTarget) {
+            addLog(`New target selected: ${nextTarget.ssid} (${nextTarget.bssid})`);
+            setCurrentTarget(nextTarget);
+            setIsAttackPanelOpen(true);
+        } else {
+            addLog("No new targets found. Will rescan in 10 seconds.");
+            setTimeout(runAttackCycle, 10000);
+        }
+    };
+
+    useEffect(() => {
+        if (isDaemonRunning && !currentTarget) {
+            const timer = setTimeout(runAttackCycle, 2000); // Initial delay
+            return () => clearTimeout(timer);
+        }
+    }, [isDaemonRunning, networks, currentTarget, attackedBssids]);
+
+
+    const handleAttackComplete = (password: string | null) => {
+        setIsAttackPanelOpen(false);
+        if (password && currentTarget) {
+            addLog(`SUCCESS! Password for ${currentTarget.ssid} is "${password}".`);
+            toast({ title: "Crack Successful!", description: `Password for ${currentTarget.ssid} found!` });
+            setIsDaemonRunning(false); 
+            setConnectedNetwork(currentTarget);
+            setTimeout(() => setIsModeDialogOpen(true), 500);
+        } else {
+            addLog(`Attack on ${currentTarget?.ssid} failed. Moving to next target.`);
+            if (currentTarget) {
+                setAttackedBssids(prev => new Set(prev).add(currentTarget.bssid));
+            }
+        }
+        setCurrentTarget(null); // This will trigger the useEffect to find the next target
+    };
+    
+    const handleModeSelection = (mode: 'regular' | 'mitm') => {
+        if (connectedNetwork) {
+            setConnection({ ssid: connectedNetwork.ssid, mode: mode });
+            toast({
+                title: "Connection Established",
+                description: `Connected to ${connectedNetwork.ssid} in ${mode} mode.`,
+            });
+        }
+        setIsModeDialogOpen(false);
+    };
+    
+    const handleDisconnect = () => {
+        toast({
+            title: "Disconnected",
+            description: `You have disconnected from ${connection.ssid}.`,
+        });
+        setConnection({ ssid: null, mode: 'idle' });
+        setConnectedNetwork(null);
+        // Optionally restart the daemon
+        // setIsDaemonRunning(true);
+    }
+    
+    const renderContent = () => {
+      if (isLoading) {
+        return (
+          <div className="flex justify-center items-center py-10">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              <p className="ml-4 text-muted-foreground">Daemon initializing, performing first scan...</p>
+          </div>
+        );
+      }
+
+      if (networks.length === 0 && !isLoading) {
+        return (
+          <div className="flex flex-col justify-center items-center py-10 text-center">
+              <WifiOff className="h-12 w-12 text-muted-foreground" />
+              <p className="mt-4 text-muted-foreground">No networks found.</p>
+          </div>
+        )
+      }
+
+      return <NetworkList networks={networks} onAttack={() => {}} connectedSsid={connection.ssid}/>;
+    }
+
+    return (
+        <main className="container mx-auto p-4 sm:p-6 md:p-8">
+            <Header connection={connection} onDisconnect={handleDisconnect} />
+            <div className="flex justify-between items-center mb-4">
+                 <h2 className="text-2xl font-bold tracking-tight">Auto Attack Daemon</h2>
+                 <Button onClick={() => setIsDaemonRunning(!isDaemonRunning)} variant="outline" disabled={isLoading || connection.ssid !== null}>
+                    {isDaemonRunning ? <Pause className="mr-2"/> : <Play className="mr-2"/>}
+                    {isDaemonRunning ? 'Pause Daemon' : 'Resume Daemon'}
+                 </Button>
+            </div>
+            
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="lg:col-span-2">
+                    {renderContent()}
+                </div>
+                <div className="lg:col-span-1 bg-card border rounded-lg p-4">
+                    <h3 className="font-semibold text-lg mb-2 flex items-center"><Terminal className="mr-2"/>Live Logs</h3>
+                    <div ref={logContainerRef} className="h-64 bg-black/80 rounded-md p-3 text-sm font-mono text-green-400 overflow-y-auto">
+                        {logs.map((log, i) => <p key={i} className="whitespace-pre-wrap leading-tight">&gt; {log}</p>)}
+                    </div>
+                </div>
+            </div>
+
+            {currentTarget && (
+                <AttackPanel
+                    network={currentTarget}
+                    isOpen={isAttackPanelOpen}
+                    onClose={() => { /* Cannot be closed manually in daemon mode */ }}
+                    onSuccess={handleAttackComplete}
+                    isDaemon={true}
+                />
+            )}
+            
+            {connectedNetwork && (
+                <ModeSelectionDialog
+                  isOpen={isModeDialogOpen}
+                  onClose={() => setIsModeDialogOpen(false)}
+                  onSelectMode={handleModeSelection}
+                  ssid={connectedNetwork.ssid}
+                />
+            )}
+        </main>
+    );
+}
