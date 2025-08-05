@@ -18,7 +18,7 @@ const config = {
     },
     extend: {
       fontFamily: {
-        body: ['var(--font-body)', 'Arial', 'sans-serif'],
+        body: ['Arial', 'sans-serif'],
         headline: ['var(--font-headline)', 'Space Grotesk', 'sans-serif'],
         code: ['"Courier New"', 'monospace'],
       },
@@ -39,6 +39,10 @@ const config = {
         destructive: {
           DEFAULT: 'hsl(var(--destructive))',
           foreground: 'hsl(var(--destructive-foreground))',
+        },
+        success: {
+          DEFAULT: 'hsl(var(--success))',
+          foreground: 'hsl(var(--success-foreground))',
         },
         muted: {
           DEFAULT: 'hsl(var(--muted))',

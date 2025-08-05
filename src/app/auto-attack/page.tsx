@@ -10,6 +10,7 @@ import { NetworkList } from '@/components/network-list';
 import { AttackPanel } from '@/components/attack-panel';
 import { ModeSelectionDialog } from '@/components/mode-selection-dialog';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Loader2, Play, Pause, WifiOff, Terminal, Wifi, ShieldX } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
@@ -163,29 +164,29 @@ export default function AutoAttackPage() {
     const renderContent = () => {
       if (!isTerminalConnected) {
          return (
-             <div className="flex flex-col justify-center items-center py-10 text-center">
-                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+             <Card className="flex flex-col justify-center items-center py-10 text-center">
+                <Loader2 className="h-8 w-8 animate-spin text-accent" />
                 <p className="mt-4 text-muted-foreground">Waiting for connection to local terminal server...</p>
                 <p className="text-sm text-muted-foreground">Please start the python server on your machine.</p>
-            </div>
+            </Card>
          )
       }
       
       if (isLoading) {
         return (
-          <div className="flex justify-center items-center py-10">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <Card className="flex justify-center items-center py-10">
+              <Loader2 className="h-8 w-8 animate-spin text-accent" />
               <p className="ml-4 text-muted-foreground">Daemon initializing, performing first scan...</p>
-          </div>
+          </Card>
         );
       }
 
       if (networks.length === 0 && !isLoading) {
         return (
-          <div className="flex flex-col justify-center items-center py-10 text-center">
+          <Card className="flex flex-col justify-center items-center py-10 text-center">
               <WifiOff className="h-12 w-12 text-muted-foreground" />
               <p className="mt-4 text-muted-foreground">No networks found.</p>
-          </div>
+          </Card>
         )
       }
 
@@ -195,10 +196,10 @@ export default function AutoAttackPage() {
     return (
         <main className="container mx-auto p-4 sm:p-6 md:p-8">
             <Header connection={connection} onDisconnect={handleDisconnect} />
-            <div className="flex justify-between items-center mb-4">
+            <div className="flex justify-between items-center mb-6">
                  <h2 className="text-2xl font-bold tracking-tight">Auto Attack Daemon</h2>
                  <div className="flex items-center gap-4">
-                    <Badge variant={isTerminalConnected ? 'default' : 'destructive'} className="gap-2">
+                    <Badge variant={isTerminalConnected ? 'success' : 'destructive'} className="gap-2 border-none">
                         {isTerminalConnected ? <Wifi className="w-4 h-4"/> : <ShieldX className="w-4 h-4"/>}
                         Terminal {isTerminalConnected ? 'Connected' : 'Disconnected'}
                     </Badge>
@@ -213,12 +214,16 @@ export default function AutoAttackPage() {
                 <div className="lg:col-span-2">
                     {renderContent()}
                 </div>
-                <div className="lg:col-span-1 bg-card border rounded-lg p-4">
-                    <h3 className="font-semibold text-lg mb-2 flex items-center"><Terminal className="mr-2"/>Live Terminal Output</h3>
-                    <div ref={logContainerRef} className="h-[400px] bg-black/90 rounded-md p-3 text-sm font-mono text-green-400 overflow-y-auto">
-                        {logs.map((log, i) => <p key={i} className="whitespace-pre-wrap leading-tight font-code">{log.startsWith('[TERMINAL]') ? <span className="text-cyan-400">{log}</span> : `> ${log}`}</p>)}
-                    </div>
-                </div>
+                <Card className="lg:col-span-1">
+                    <CardHeader>
+                        <CardTitle className="font-semibold text-lg flex items-center"><Terminal className="mr-2"/>Live Terminal Output</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div ref={logContainerRef} className="h-[400px] bg-black/50 rounded-md p-3 text-sm font-mono text-green-400 overflow-y-auto border border-primary/20">
+                          {logs.map((log, i) => <p key={i} className="whitespace-pre-wrap leading-tight font-code">{log.startsWith('[TERMINAL]') ? <span className="text-cyan-400">{log}</span> : `> ${log}`}</p>)}
+                      </div>
+                    </CardContent>
+                </Card>
             </div>
 
             {currentTarget && (
