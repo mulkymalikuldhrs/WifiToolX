@@ -11,10 +11,9 @@ import { AttackPanel } from '@/components/attack-panel';
 import { ModeSelectionDialog } from '@/components/mode-selection-dialog';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Loader2, Play, Pause, WifiOff, Terminal, Wifi, ShieldX, Bot } from 'lucide-react';
+import { Loader2, Play, Pause, WifiOff, Terminal, Wifi, ShieldX } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
-import { Chatbot } from '@/components/chatbot';
 
 export default function AutoAttackPage() {
     const [networks, setNetworks] = useState<WifiNetwork[]>([]);
@@ -35,23 +34,6 @@ export default function AutoAttackPage() {
     const { toast } = useToast();
     const ws = useRef<WebSocket | null>(null);
     const [isTerminalConnected, setIsTerminalConnected] = useState(false);
-
-    const [isChatbotOpen, setIsChatbotOpen] = useState(false);
-    const [isOnline, setIsOnline] = useState(false);
-
-     useEffect(() => {
-        if (typeof window !== 'undefined') {
-            setIsOnline(navigator.onLine);
-            const handleOnline = () => setIsOnline(true);
-            const handleOffline = () => setIsOnline(false);
-            window.addEventListener('online', handleOnline);
-            window.addEventListener('offline', handleOffline);
-            return () => {
-                window.removeEventListener('online', handleOnline);
-                window.removeEventListener('offline', handleOffline);
-            };
-        }
-    }, []);
 
     const addLog = (message: string, fromTerminal = false) => {
         const prefix = fromTerminal ? '[TERMINAL] ' : '';
@@ -249,18 +231,6 @@ export default function AutoAttackPage() {
                     </CardContent>
                 </Card>
             </div>
-
-             <Button
-                onClick={() => setIsChatbotOpen(true)}
-                className="fixed bottom-6 right-6 h-16 w-16 rounded-full shadow-lg"
-                aria-label="Open Chatbot"
-                disabled={!isOnline}
-                variant="default"
-              >
-                <Bot className="h-8 w-8" />
-            </Button>
-
-            <Chatbot isOpen={isChatbotOpen} onClose={() => setIsChatbotOpen(false)} isOnline={isOnline} />
 
             {currentTarget && (
                 <AttackPanel

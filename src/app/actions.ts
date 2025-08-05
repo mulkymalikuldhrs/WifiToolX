@@ -2,10 +2,9 @@
 
 import {
   generatePasswordCandidates,
-  type GeneratePasswordCandidatesInput,
 } from '@/ai/flows/generate-password-candidates';
-import { cyberPentestChatbot, type CyberPentestChatbotInput } from '@/ai/flows/cyber-pentest-chatbot';
-import type { WifiNetwork } from '@/lib/types';
+import { cyberPentestChatbot } from '@/ai/flows/cyber-pentest-chatbot';
+import type { WifiNetwork, GeneratePasswordCandidatesInput, CyberPentestChatbotInput } from '@/lib/types';
 
 // This function simulates scanning for networks on the backend.
 function generateRealNetworks(existingNetworks: WifiNetwork[] = []): WifiNetwork[] {

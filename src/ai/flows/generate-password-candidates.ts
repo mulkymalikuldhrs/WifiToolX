@@ -4,14 +4,14 @@
  * @fileOverview A password candidate generation AI agent.
  *
  * - generatePasswordCandidates - A function that handles the password candidate generation process.
- * - GeneratePasswordCandidatesInput - The input type for the generatePasswordCandidates function.
- * - GeneratePasswordCandidatesOutput - The return type for the generatePasswordCandidates function.
  */
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+import type { GeneratePasswordCandidatesInput, GeneratePasswordCandidatesOutput } from '@/lib/types';
 
-const GeneratePasswordCandidatesInputSchema = z.object({
+
+export const GeneratePasswordCandidatesInputSchema = z.object({
   targetName: z.string().describe('The name or identifier of the target account or network.'),
   knownInformation: z
     .string()
@@ -21,18 +21,14 @@ const GeneratePasswordCandidatesInputSchema = z.object({
     ),
   passwordHint: z.string().optional().describe('A hint about the password structure or content.'),
 });
-export type GeneratePasswordCandidatesInput = z.infer<
-  typeof GeneratePasswordCandidatesInputSchema
->;
 
-const GeneratePasswordCandidatesOutputSchema = z.object({
+
+export const GeneratePasswordCandidatesOutputSchema = z.object({
   passwordCandidates: z
     .array(z.string())
     .describe('An array of potential password candidates.'),
 });
-export type GeneratePasswordCandidatesOutput = z.infer<
-  typeof GeneratePasswordCandidatesOutputSchema
->;
+
 
 export async function generatePasswordCandidates(
   input: GeneratePasswordCandidatesInput

@@ -10,6 +10,7 @@ import { ScrollArea } from './ui/scroll-area';
 import { Badge } from './ui/badge';
 import { cn } from '@/lib/utils';
 import { Avatar, AvatarFallback } from './ui/avatar';
+import type { ChatMessage } from '@/lib/types';
 
 interface ChatbotProps {
   isOpen: boolean;
@@ -17,13 +18,8 @@ interface ChatbotProps {
   isOnline: boolean;
 }
 
-type Message = {
-  role: 'user' | 'model';
-  content: string;
-};
-
 export function Chatbot({ isOpen, onClose, isOnline }: ChatbotProps) {
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
@@ -50,7 +46,7 @@ export function Chatbot({ isOpen, onClose, isOnline }: ChatbotProps) {
   const handleSend = async () => {
     if (input.trim() === '' || !isOnline) return;
 
-    const userMessage: Message = { role: 'user', content: input };
+    const userMessage: ChatMessage = { role: 'user', content: input };
     setMessages(prev => [...prev, userMessage]);
     setInput('');
     setIsLoading(true);
@@ -63,10 +59,10 @@ export function Chatbot({ isOpen, onClose, isOnline }: ChatbotProps) {
     setIsLoading(false);
 
     if ('error' in result) {
-      const errorMessage: Message = { role: 'model', content: `Error: ${result.error}` };
+      const errorMessage: ChatMessage = { role: 'model', content: `Error: ${result.error}` };
       setMessages(prev => [...prev, errorMessage]);
     } else {
-      const modelMessage: Message = { role: 'model', content: result.response };
+      const modelMessage: ChatMessage = { role: 'model', content: result.response };
       setMessages(prev => [...prev, modelMessage]);
     }
   };
