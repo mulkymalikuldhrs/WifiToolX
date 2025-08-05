@@ -11,9 +11,10 @@ import { AttackPanel } from '@/components/attack-panel';
 import { ModeSelectionDialog } from '@/components/mode-selection-dialog';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Loader2, Play, Pause, WifiOff, Terminal, Wifi, ShieldX } from 'lucide-react';
+import { Loader2, Play, Pause, WifiOff, Terminal, Wifi, ShieldX, Bot } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
+import { Chatbot } from '@/components/chatbot';
 
 export default function AutoAttackPage() {
     const [networks, setNetworks] = useState<WifiNetwork[]>([]);
@@ -34,6 +35,21 @@ export default function AutoAttackPage() {
     const { toast } = useToast();
     const ws = useRef<WebSocket | null>(null);
     const [isTerminalConnected, setIsTerminalConnected] = useState(false);
+
+    const [isChatbotOpen, setIsChatbotOpen] = useState(false);
+    const [isOnline, setIsOnline] = useState(false);
+
+     useEffect(() => {
+        setIsOnline(navigator.onLine);
+        const handleOnline = () => setIsOnline(true);
+        const handleOffline = () => setIsOnline(false);
+        window.addEventListener('online', handleOnline);
+        window.addEventListener('offline', handleOffline);
+        return () => {
+            window.removeEventListener('online', handleOnline);
+            window.removeEventListener('offline', handleOffline);
+        };
+    }, []);
 
     const addLog = (message: string, fromTerminal = false) => {
         const prefix = fromTerminal ? '[TERMINAL] ' : '';
@@ -196,7 +212,7 @@ export default function AutoAttackPage() {
     }
 
     return (
-        <main className="container mx-auto p-4 sm:p-6 md:p-8">
+        <div className="container mx-auto p-4 sm:p-6 md:p-8">
             <Header connection={connection} onDisconnect={handleDisconnect} />
             <div className="flex justify-between items-center mb-6">
                  <h2 className="text-2xl font-bold tracking-tight">Auto Attack Daemon</h2>
@@ -221,7 +237,7 @@ export default function AutoAttackPage() {
                         <CardTitle className="font-semibold text-lg flex items-center"><Terminal className="mr-2"/>Live Terminal Output</CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <div ref={logContainerRef} className="h-[400px] bg-black/50 rounded-md p-3 text-sm font-mono text-green-400 overflow-y-auto border border-primary/20">
+                      <div ref={logContainerRef} className="h-[400px] bg-black/50 rounded-md p-3 text-sm font-mono text-primary/80 overflow-y-auto border border-primary/20">
                           {logs.map((log, i) => (
                               <p key={i} className="whitespace-pre-wrap break-all leading-tight font-code">
                                 {log.includes('[TERMINAL]') ? <span className="text-cyan-400">{log.substring(log.indexOf(' ')+1)}</span> : <span>{`> ${log.substring(log.indexOf(' ')+1)}`}</span>}
@@ -231,6 +247,18 @@ export default function AutoAttackPage() {
                     </CardContent>
                 </Card>
             </div>
+
+             <Button
+                onClick={() => setIsChatbotOpen(true)}
+                className="fixed bottom-6 right-6 h-16 w-16 rounded-full shadow-lg"
+                aria-label="Open Chatbot"
+                disabled={!isOnline}
+                variant="default"
+              >
+                <Bot className="h-8 w-8" />
+            </Button>
+
+            <Chatbot isOpen={isChatbotOpen} onClose={() => setIsChatbotOpen(false)} isOnline={isOnline} />
 
             {currentTarget && (
                 <AttackPanel
@@ -251,8 +279,6 @@ export default function AutoAttackPage() {
                   ssid={connectedNetwork.ssid}
                 />
             )}
-        </main>
+        </div>
     );
 }
-
-    
