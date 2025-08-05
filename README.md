@@ -1,14 +1,14 @@
 <div align="center">
-  <img src="https://placehold.co/1200x400.png" alt="WiFiHunterX Cover" data-ai-hint="hacker network">
-  <h1 align="center">🧠 WiFiHunterX – Ultimate WiFi Pentest Daemon Tool</h1>
+  <img src="https://placehold.co/1200x400.png" alt="WifiToolX Cover" data-ai-hint="hacker network">
+  <h1 align="center">🧠 WifiToolX – Ultimate WiFi Pentest Daemon Tool</h1>
 </div>
 
-**WiFiHunterX** adalah dasbor antarmuka web yang canggih untuk mengotomatiskan dan mengelola serangan keamanan jaringan WiFi. Proyek ini secara unik menjembatani kenyamanan antarmuka pengguna grafis (GUI) modern dengan kekuatan eksekusi baris perintah (CLI) mentah, memungkinkan pengguna untuk mengontrol alat pentesting yang berjalan di mesin lokal mereka langsung dari browser.
+**WifiToolX** adalah dasbor antarmuka web yang canggih untuk mengotomatiskan dan mengelola serangan keamanan jaringan WiFi. Proyek ini secara unik menjembatani kenyamanan antarmuka pengguna grafis (GUI) modern dengan kekuatan eksekusi baris perintah (CLI) mentah, memungkinkan pengguna untuk mengontrol alat pentesting yang berjalan di mesin lokal mereka langsung dari browser.
 
 Aplikasi ini bertindak sebagai "pusat komando" untuk **daemon serangan otomatis**, yang secara mandiri memindai jaringan, memilih target, menggunakan AI untuk menghasilkan kata sandi potensial, dan mengirimkan perintah serangan nyata ke server terminal lokal melalui WebSocket.
 
 Dibuat oleh: **Mulky Malikul Dhaher** ([GitHub](https://github.com/mulkymalikuldhrs))  
-Source Code: [WiFiHunterX Repository](https://github.com/mulkymalikuldhrs/WifiToolX)
+Source Code: [WifiToolX Repository](https://github.com/mulkymalikuldhrs/WifiToolX)
 
 ---
 

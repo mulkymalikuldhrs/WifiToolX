@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- **Initial Release of WiFiHunterX**
+- **Initial Release of WifiToolX**
 - **Modern Web UI**: Built with Next.js, React, ShadCN, and Tailwind CSS, featuring a "glassmorphism" hacker-themed design.
 - **Auto Attack Daemon**: Autonomous mode that scans for networks, selects valid targets, and initiates attacks without user intervention.
 - **Real-time Terminal Integration**: Connects to a local Python WebSocket server to execute commands and stream live terminal output directly to the web UI.

@@ -135,7 +135,7 @@ async def main():
     setup_logging()
     host = "localhost"
     port = 8080
-    log_message(f"Starting WiFiHunterX local terminal server on ws://{host}:{port}", console_only=True)
+    log_message(f"Starting WifiToolX local terminal server on ws://{host}:{port}", console_only=True)
     log_message("Waiting for the web UI to connect...", console_only=True)
     
     server = await websockets.serve(handler, host, port)

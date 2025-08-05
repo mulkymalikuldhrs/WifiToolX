@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import RootLayoutClient from './layout-client';
 
 export const metadata: Metadata = {
-  title: 'WiFiHunterX',
+  title: 'WifiToolX',
   description: 'Advanced WiFi Security Auditing Tool',
 };
 

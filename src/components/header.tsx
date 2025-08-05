@@ -17,7 +17,7 @@ export function Header({ connection, onDisconnect }: HeaderProps) {
             <Wifi className="text-primary-foreground w-8 h-8" />
         </div>
         <h1 className="text-3xl md:text-4xl font-headline font-bold">
-          WiFiHunterX
+          WifiToolX
         </h1>
       </div>
       {connection.ssid && (

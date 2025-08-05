@@ -9,7 +9,7 @@ export default function Home() {
     <main className="flex flex-col items-center justify-center min-h-screen p-4 sm:p-8 md:p-12">
       <div className="text-center mb-8">
         <h1 className="text-5xl font-bold font-headline mb-2 text-primary flex items-center justify-center gap-4">
-            <Wifi className="w-12 h-12" /> WiFiHunterX
+            <Wifi className="w-12 h-12" /> WifiToolX
         </h1>
         <p className="text-lg text-muted-foreground">The Ultimate WiFi Pentest Daemon Tool</p>
       </div>

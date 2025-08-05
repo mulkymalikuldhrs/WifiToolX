@@ -1,4 +1,4 @@
-# WiFiHunterX Project Roadmap
+# WifiToolX Project Roadmap
 
 This file outlines the planned features and improvements for future releases.
 
