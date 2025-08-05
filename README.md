@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="/img.png" alt="WifiToolX Cover" data-ai-hint="hacker network">
+  <img src="img.png" alt="WifiToolX Cover" data-ai-hint="hacker network">
   <h1 align="center">🧠 WifiToolX – Ultimate WiFi Pentest Daemon Tool</h1>
 </div>
 
