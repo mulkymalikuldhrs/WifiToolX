@@ -35,8 +35,9 @@ export default function AutoAttackPage() {
     const ws = useRef<WebSocket | null>(null);
     const [isTerminalConnected, setIsTerminalConnected] = useState(false);
 
-    const addLog = (message: string) => {
-        setLogs(prev => [...prev.slice(-200), `${new Date().toLocaleTimeString()}: ${message}`]);
+    const addLog = (message: string, fromTerminal = false) => {
+        const prefix = fromTerminal ? '[TERMINAL] ' : '';
+        setLogs(prev => [...prev.slice(-200), `${new Date().toLocaleTimeString()}: ${prefix}${message}`]);
     };
 
     useEffect(() => {
@@ -55,7 +56,7 @@ export default function AutoAttackPage() {
             };
 
             ws.current.onmessage = (event) => {
-                addLog(`[TERMINAL] ${event.data}`);
+                addLog(event.data, true);
             };
 
             ws.current.onclose = () => {
@@ -221,7 +222,11 @@ export default function AutoAttackPage() {
                     </CardHeader>
                     <CardContent>
                       <div ref={logContainerRef} className="h-[400px] bg-black/50 rounded-md p-3 text-sm font-mono text-green-400 overflow-y-auto border border-primary/20">
-                          {logs.map((log, i) => <p key={i} className="whitespace-pre-wrap break-all leading-tight font-code">{log.startsWith('[TERMINAL]') ? <span className="text-cyan-400">{log}</span> : `> ${log}`}</p>)}
+                          {logs.map((log, i) => (
+                              <p key={i} className="whitespace-pre-wrap break-all leading-tight font-code">
+                                {log.includes('[TERMINAL]') ? <span className="text-cyan-400">{log.substring(log.indexOf(' ')+1)}</span> : <span>{`> ${log.substring(log.indexOf(' ')+1)}`}</span>}
+                              </p>
+                          ))}
                       </div>
                     </CardContent>
                 </Card>
@@ -249,3 +254,5 @@ export default function AutoAttackPage() {
         </main>
     );
 }
+
+    
