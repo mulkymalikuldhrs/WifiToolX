@@ -1,4 +1,3 @@
-
 "use client"
 
 import {
@@ -14,60 +13,63 @@ import { Button } from "./ui/button"
 
 export function SetupTutorial() {
     const { toast } = useToast()
-    const npmCommand = "npm install"
+    const npmInstallCommand = "npm install"
+    const pipInstallCommand = "pip install websockets"
     const runCommand = "npm run dev"
     
-    const copyToClipboard = (text: string) => {
+    const copyToClipboard = (text: string, label: string) => {
         navigator.clipboard.writeText(text);
         toast({
-            title: "Copied to clipboard!",
+            title: "Command Copied!",
+            description: `${label} has been copied to your clipboard.`,
         })
     }
 
     return (
         <Card className="h-full">
             <CardHeader>
-                <CardTitle className="text-center text-2xl font-headline flex items-center justify-center gap-2"><Terminal/>Local Setup</CardTitle>
+                <CardTitle className="text-center text-2xl font-headline flex items-center justify-center gap-2"><Terminal/>Local Setup Guide</CardTitle>
                 <CardDescription className="text-center">How to run the local terminal server</CardDescription>
             </CardHeader>
             <CardContent>
                 <Accordion type="single" collapsible className="w-full" defaultValue="item-1">
                     <AccordionItem value="item-1">
                         <AccordionTrigger>Step 1: The Concept</AccordionTrigger>
-                        <AccordionContent className="text-muted-foreground">
-                            This web UI acts as a remote control. It sends commands to a simple Python server running on your local machine. This server then executes penetration testing tools like Aircrack-ng for you. The Python server is now integrated to run automatically with the project.
+                        <AccordionContent className="text-muted-foreground space-y-2">
+                           <p>This web UI is a remote control. It sends commands to a Python server running on your local machine, which then executes real penetration testing tools.</p>
+                           <p>We've integrated the startup process, so you only need one command to run everything.</p>
                         </AccordionContent>
                     </AccordionItem>
                     <AccordionItem value="item-2">
                         <AccordionTrigger>Step 2: Install Dependencies</AccordionTrigger>
-                        <AccordionContent className="space-y-2">
-                             <p className="text-muted-foreground">First, ensure all Node.js and Python dependencies are installed. You will need Python 3 and Node.js on your system. Run this command in your project's root directory:</p>
-                             <pre className="bg-black/80 rounded-md p-3 text-sm font-mono text-green-400 overflow-x-auto text-wrap flex justify-between items-center">
-                                <code>{npmCommand}</code>
-                                <Button size="icon" variant="ghost" onClick={() => copyToClipboard(npmCommand)}><Copy className="w-4 h-4"/></Button>
-                             </pre>
-                             <p className="text-muted-foreground mt-2">This will install the required Node packages (like Next.js and `npm-run-all`). You also need the `websockets` library for Python. You can install it using pip:</p>
-                             <pre className="bg-black/80 rounded-md p-3 text-sm font-mono text-green-400 overflow-x-auto text-wrap flex justify-between items-center">
-                                <code>pip install websockets</code>
-                                <Button size="icon" variant="ghost" onClick={() => copyToClipboard('pip install websockets')}><Copy className="w-4 h-4"/></Button>
-                             </pre>
+                        <AccordionContent className="space-y-4">
+                             <p className="text-muted-foreground">First, install the required Node.js packages:</p>
+                             <div className="bg-black/50 rounded-md p-3 font-mono text-sm text-primary/80 flex justify-between items-center">
+                                <code>{npmInstallCommand}</code>
+                                <Button size="icon" variant="ghost" onClick={() => copyToClipboard(npmInstallCommand, "NPM install command")}><Copy className="w-4 h-4"/></Button>
+                             </div>
+                             <p className="text-muted-foreground">Next, ensure you have the required Python library (`websockets`):</p>
+                              <div className="bg-black/50 rounded-md p-3 font-mono text-sm text-primary/80 flex justify-between items-center">
+                                <code>{pipInstallCommand}</code>
+                                <Button size="icon" variant="ghost" onClick={() => copyToClipboard(pipInstallCommand, "Pip install command")}><Copy className="w-4 h-4"/></Button>
+                             </div>
                         </AccordionContent>
                     </AccordionItem>
                     <AccordionItem value="item-3">
                         <AccordionTrigger>Step 3: Run The Project</AccordionTrigger>
                         <AccordionContent className="space-y-4">
-                            <p className="text-muted-foreground">Now, simply run the main development command. This single command will start both the Next.js web application and the Python local terminal server simultaneously.</p>
-                             <pre className="bg-black/80 rounded-md p-3 text-sm font-mono text-green-400 overflow-x-auto text-wrap flex justify-between items-center">
+                            <p className="text-muted-foreground">Now, simply run the main development command. This will start the Next.js web app and the Python local terminal server simultaneously.</p>
+                            <div className="bg-black/50 rounded-md p-3 font-mono text-sm text-primary flex justify-between items-center">
                                 <code>{runCommand}</code>
-                                <Button size="icon" variant="ghost" onClick={() => copyToClipboard(runCommand)}><Copy className="w-4 h-4"/></Button>
-                             </pre>
-                             <p className="text-xs text-destructive/80">Warning: The local Python server is designed for educational purposes in a controlled environment. Do not expose it to untrusted networks.</p>
+                                <Button size="icon" variant="ghost" onClick={() => copyToClipboard(runCommand, "Run command")}><Copy className="w-4 h-4"/></Button>
+                             </div>
+                             <p className="text-xs text-destructive/80">Warning: The local Python server executes commands directly on your machine. It is designed for educational purposes in a controlled environment. Do not expose it to untrusted networks.</p>
                         </AccordionContent>
                     </AccordionItem>
                      <AccordionItem value="item-4">
                         <AccordionTrigger>Step 4: Start Attacking</AccordionTrigger>
                         <AccordionContent className="text-muted-foreground">
-                           Once the servers are running, click "Full Auto Attack" from the launcher. The UI will automatically connect to your local Python server, and you'll see real terminal output in the live log on the next page.
+                           Once both servers are running (you'll see output in your terminal), click "Full Auto Attack" from the launcher. The UI will connect to your local server, and the daemon will begin its work. You'll see real-time output in the live log panel.
                         </AccordionContent>
                     </AccordionItem>
                 </Accordion>

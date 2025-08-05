@@ -18,9 +18,9 @@ const config = {
     },
     extend: {
       fontFamily: {
-        body: ['Arial', 'sans-serif'],
-        headline: ['var(--font-headline)', 'Space Grotesk', 'sans-serif'],
-        code: ['"Courier New"', 'monospace'],
+        body: ['var(--font-body)', 'sans-serif'],
+        headline: ['var(--font-headline)', 'sans-serif'],
+        code: ['var(--font-code)', 'monospace'],
       },
       colors: {
         border: 'hsl(var(--border))',
@@ -59,13 +59,6 @@ const config = {
         card: {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
-        },
-        chart: {
-          '1': 'hsl(var(--chart-1))',
-          '2': 'hsl(var(--chart-2))',
-          '3': 'hsl(var(--chart-3))',
-          '4': 'hsl(var(--chart-4))',
-          '5': 'hsl(var(--chart-5))',
         },
       },
       borderRadius: {

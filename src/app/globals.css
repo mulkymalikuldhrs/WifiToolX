@@ -13,7 +13,7 @@
     --popover: 240 10% 3.9%;
     --popover-foreground: 0 0% 98%;
 
-    --primary: 174 100% 34%;
+    --primary: 174 100% 40%;
     --primary-foreground: 0 0% 98%;
 
     --secondary: 240 3.7% 15.9%;
@@ -31,9 +31,9 @@
     --success: 142 76% 36%;
     --success-foreground: 0 0% 98%;
 
-    --border: 240 3.7% 15.9%;
+    --border: 240 3.7% 25.9%;
     --input: 240 3.7% 15.9%;
-    --ring: 174 100% 34%;
+    --ring: 174 100% 40%;
     --radius: 0.5rem;
   }
  
@@ -77,6 +77,12 @@
   }
   body {
     @apply bg-background text-foreground;
-    background-image: linear-gradient(to bottom right, #1a001a, #000);
+    background-image: linear-gradient(to bottom right, hsl(240 10% 3.9%), #0d001a);
+  }
+}
+
+@layer components {
+  .font-code {
+      font-family: var(--font-code);
   }
 }

@@ -1,4 +1,4 @@
-# 🧠 `WiFiHunterX` – Ultimate WiFi Pentest Daemon Tool
+# 🧠 WiFiHunterX – Ultimate WiFi Pentest Daemon Tool
 
 **WiFiHunterX** adalah dasbor antarmuka web yang canggih untuk mengotomatiskan dan mengelola serangan keamanan jaringan WiFi. Proyek ini secara unik menjembatani kenyamanan antarmuka pengguna grafis (GUI) modern dengan kekuatan eksekusi baris perintah (CLI) mentah, memungkinkan pengguna untuk mengontrol alat pentesting yang berjalan di mesin lokal mereka langsung dari browser.
 
@@ -21,18 +21,53 @@ Aplikasi ini bertindak sebagai "pusat komando" untuk **daemon serangan otomatis*
 
 ---
 
+## 🏗️ ARSITEKTUR
+
+Aplikasi ini menggunakan arsitektur client-server yang cerdas:
+1.  **Frontend (Client)**: Aplikasi web Next.js/React yang berjalan di browser Anda. Ini adalah antarmuka kontrol visual.
+2.  **Backend (Server Lokal)**: Server WebSocket Python (`local_server.py`) yang Anda jalankan di mesin Anda. Server ini mendengarkan perintah dari frontend dan memiliki izin untuk mengeksekusi alat pentesting (seperti `aircrack-ng`, `reaver`, dll.) secara lokal.
+
+Komunikasi antara keduanya terjadi secara real-time melalui WebSockets.
+
 ## 🔄 ALUR KERJA APLIKASI
 
 1.  **Inisialisasi**: Pengguna menjalankan `npm run dev`, yang memulai aplikasi web Next.js dan server terminal Python lokal secara bersamaan.
-2.  **Koneksi**: Aplikasi web secara otomatis mencoba untuk terhubung ke server terminal lokal melalui WebSocket.
+2.  **Koneksi**: Aplikasi web secara otomatis mencoba untuk terhubung ke server terminal lokal melalui WebSocket. Status koneksi ditampilkan di UI.
 3.  **Mulai Daemon**: Setelah terhubung, halaman "Auto Attack" memulai siklus daemon:
-    *   Meminta daftar jaringan WiFi dari backend.
-    *   Memilih target yang valid dan belum pernah diserang.
+    *   Meminta daftar jaringan WiFi (dengan mengirimkan perintah simulasi atau nyata ke backend).
+    *   Memilih target yang valid (terenkripsi dan belum pernah diserang).
     *   Membuka panel serangan.
 4.  **Serangan**:
     *   Aplikasi web memanggil AI untuk menghasilkan kandidat kata sandi berdasarkan SSID target.
-    *   Perintah `crack_wpa` (disertai kandidat kata sandi) dikirim ke server terminal lokal.
+    *   Perintah `crack_wpa` (atau yang setara) dikirim ke server terminal lokal melalui WebSocket.
 5.  **Hasil**:
     *   **Berhasil**: Jika terminal melaporkan keberhasilan, pengguna akan diminta untuk memilih mode koneksi (Regular/MITM). Daemon dijeda.
     *   **Gagal**: Jika gagal, daemon akan menandai target sebagai sudah dicoba dan secara otomatis beralih ke target berikutnya.
 6.  **Logging**: Semua output dari terminal lokal ditampilkan secara real-time di antarmuka web.
+
+---
+
+## 🛠️ PENYIAPAN & INSTALASI
+
+Untuk menjalankan proyek ini, Anda memerlukan Node.js dan Python 3 terinstal.
+
+1.  **Install Dependensi Node.js**:
+    ```bash
+    npm install
+    ```
+
+2.  **Install Dependensi Python**:
+    ```bash
+    pip install websockets
+    ```
+
+3.  **Jalankan Proyek**:
+    Gunakan satu perintah ini untuk menjalankan server frontend dan backend secara bersamaan.
+    ```bash
+    npm run dev
+    ```
+
+4.  **Buka Aplikasi**:
+    Buka browser Anda dan navigasikan ke `http://localhost:9002` (atau port apa pun yang Anda konfigurasikan).
+
+> **Peringatan Keamanan**: Server Python lokal (`local_server.py`) dirancang untuk tujuan pendidikan dan untuk digunakan dalam lingkungan yang terkendali dan tepercaya. **Jangan pernah** mengeksposnya ke jaringan yang tidak tepercaya karena dapat mengeksekusi perintah sewenang-wenang.

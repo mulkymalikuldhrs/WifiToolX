@@ -28,10 +28,10 @@ const SignalStrength = ({ signal }: { signal: number }) => {
 
 export function NetworkList({ networks, onAttack, connectedSsid }: NetworkListProps) {
   return (
-    <div className="rounded-lg border bg-black/20 backdrop-blur-lg">
+    <div className="rounded-lg border border-primary/20 bg-black/30 backdrop-blur-lg">
       <Table>
         <TableHeader>
-          <TableRow className="hover:bg-transparent border-b-white/10">
+          <TableRow className="hover:bg-transparent border-b-primary/20">
             <TableHead className="w-1/3">SSID</TableHead>
             <TableHead className="text-center">Signal</TableHead>
             <TableHead className="text-center">Security</TableHead>
@@ -41,9 +41,9 @@ export function NetworkList({ networks, onAttack, connectedSsid }: NetworkListPr
         </TableHeader>
         <TableBody>
           {networks.map((network) => (
-            <TableRow key={network.bssid} className={cn("border-white/10 hover:bg-white/5", connectedSsid === network.ssid && 'bg-primary/20 hover:bg-primary/20')}>
+            <TableRow key={network.bssid} className={cn("border-b-primary/10 hover:bg-primary/10", connectedSsid === network.ssid && 'bg-primary/20 hover:bg-primary/20')}>
               <TableCell className="font-medium">{network.ssid}</TableCell>
-              <TableCell className="flex justify-center">
+              <TableCell className="flex justify-center items-center h-14">
                 <SignalStrength signal={network.signal} />
               </TableCell>
               <TableCell className="text-center">
