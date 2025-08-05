@@ -1,22 +1,67 @@
-# **App Name**: WiFiHunterX
+# Blueprint Proyek WiFiHunterX
 
-## Core Features:
+## Pendahuluan
+`WiFiHunterX` adalah alat serangan otomatis jaringan WiFi yang dirancang sebagai sistem daemon yang lengkap, modular, dan fleksibel, mampu berjalan offline maupun online, serta dapat dikembangkan ke AI. Proyek ini ditujukan untuk pengujian penetrasi jaringan WiFi secara otomatis dan efisien.
 
-- WiFi Scanning: Scan for nearby WiFi networks and store essential data
-- WPS Check & Brute-Force: Identify WPS availability and attempt brute-force if enabled
-- WPA2 Handshake Capture: Capture WPA2 handshakes using deauthentication and monitor mode
-- Password Cracking: Crack passwords using wordlists and/or AI-powered brute-force techniques. This AI will act as a tool which is deployed according to a schedule set by the calling code.
-- Auto Connection: Automatically connect to a successfully cracked network
-- Mode Selection: Provide a prompt to choose between regular internet usage and MITM mode
-- Daemon Engine: Run automatically as a daemon, looping through scan, attack, connect, and optional sniffing processes
-- Offline/Online Mode: Operate in both offline and online modes, adapting functionality based on network availability.
+## Struktur Modular
+Proyek ini dibangun dengan struktur folder yang terbagi menjadi beberapa modul utama:
+- `core/` : Mengelola fungsi dasar seperti scan, attack, dan MITM.
+- `data/` : Menyimpan wordlist dan target jaringan.
+- `logs/` : Menyimpan log sesi dan hasil sniffing.
+- `daemon/` : Skrip otomatis untuk menjalankan proses berulang.
+- `configs/` : Pengaturan konfigurasi pengguna.
+- `launcher.sh` : Entry point CLI.
 
-## Style Guidelines:
+## Flow Otomatis
+Diagram alur otomatis:
+```mermaid
+graph TD
+    START --> |Scan WiFi| WIFI_SCAN
+    WIFI_SCAN --> |WPS tersedia?| WPS_CHECK
+    WPS_CHECK --> |Ya| WPS_BRUTE
+    WPS_CHECK --> |Tidak| WPA_HANDSHAKE
+    WPA_HANDSHAKE --> |Berhasil?|(Ya) --> AUTO_CONNECT
+    WPA_HANDSHAKE --> |Gagal?| LOOP_NEXT_TARGET
+    AUTO_CONNECT --> |Prompt mode| MODE_PROMPT
+    MODE_PROMPT --> |MITM mode?| MITM_MODE
+    MITM_MODE --> |Ya| MITM_SNIFF
+    MITM_SNIFF --> LOG_SAVE
+    LOOP_NEXT_TARGET --> LOG_SAVE
+    LOG_SAVE --> RESTART
+```
 
-- Primary color: Deep purple (#673AB7) to convey a sense of sophistication and security.
-- Background color: Very light gray (#F5F5F5), providing a clean and neutral backdrop.
-- Accent color: Teal (#009688), used sparingly for interactive elements and key highlights to draw attention.
-- Headline font: 'Space Grotesk', sans-serif. Body font: 'Inter', sans-serif.
-- Use minimalist line icons to represent different functions and modes, ensuring clarity and ease of understanding.
-- Maintain a clean and organized layout, ensuring that critical information is easily accessible and actions are intuitive.
-- Incorporate subtle animations for key actions like scanning and connecting, providing feedback without being intrusive.
+## Daemon Engine
+Daemon berjalan otomatis dalam loop:
+- Melakukan scan dan deteksi target
+- Melakukan brute-force WPS atau capture WPA handshake
+- Melakukan percobaan crack password AI
+- Koneksi otomatis jika berhasil
+- Mode MITM dan logging semua aktivitas
+- Berulang secara otomatis sampai target terkoneksi.
+
+## Sistem Logging
+Semua aktivitas direkam ke file JSON:
+- `logs/sessions/` untuk sesi dan status
+- `logs/mitm_captures/` untuk hasil sniffing
+- `wifi_pass.txt` sebagai daftar password sukses
+
+## Mode Kerja
+- **Offline** : Sistem tidak bergantung internet, lengkap untuk pengujian lokal.
+- **Online** : Sinkronisasi ke platform eXternal seperti Telegram, WebDashboard, dll.
+
+## Platform Support
+- **Linux (Kali/Debian)** : Instal dependencies via bash script.
+- **Termux/Android** : Mendukung environment root, porting ke NetHunter.
+- **Portabilitas** : Bisa dijalankan di berbagai platform dengan kompatibilitas tinggi.
+
+## Dependensi Wajib
+Berisi instalasi tools seperti `aircrack-ng`, `reaver`, `bully`, `hashcat`, dan library Python terkait.
+
+## Fitur Tambahan
+Expansion untuk plugin exploit, phishing UI, analitik GPS, dan plugin AI.
+
+---
+
+Proyek ini dirancang sebagai sistem lengkap, modular, dan mampu berkembang sesuai kebutuhan.  
+Sistem otomatis dan logging memastikan keberlanjutan operasi dan pengumpulan data yang lengkap.  
+Kendali penuh di tangan pengguna dan pengembang, dilengkapi dengan dokumentasi lengkap.
