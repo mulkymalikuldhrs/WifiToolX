@@ -1,3 +1,4 @@
+
 'use server';
 
 /**
@@ -7,27 +8,12 @@
  */
 
 import {ai} from '@/ai/genkit';
-import {z} from 'genkit';
-import type { GeneratePasswordCandidatesInput, GeneratePasswordCandidatesOutput } from '@/lib/types';
-
-
-export const GeneratePasswordCandidatesInputSchema = z.object({
-  targetName: z.string().describe('The name or identifier of the target account or network.'),
-  knownInformation: z
-    .string()
-    .optional()
-    .describe(
-      'Any known information about the target, such as birthdates, nicknames, or interests.'
-    ),
-  passwordHint: z.string().optional().describe('A hint about the password structure or content.'),
-});
-
-
-export const GeneratePasswordCandidatesOutputSchema = z.object({
-  passwordCandidates: z
-    .array(z.string())
-    .describe('An array of potential password candidates.'),
-});
+import {
+  GeneratePasswordCandidatesInputSchema,
+  GeneratePasswordCandidatesOutputSchema,
+  type GeneratePasswordCandidatesInput,
+  type GeneratePasswordCandidatesOutput,
+} from '@/lib/types';
 
 
 export async function generatePasswordCandidates(
