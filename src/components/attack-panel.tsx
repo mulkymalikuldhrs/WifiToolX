@@ -19,7 +19,7 @@ import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { KeyRound, ShieldCheck, Loader2, ShieldX } from "lucide-react";
+import { KeyRound, ShieldCheck, Loader2, ShieldX, Terminal } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface AttackPanelProps {
@@ -40,6 +40,8 @@ export function AttackPanel({ network, isOpen, onClose, onSuccess, isDaemon = fa
   const [attackResult, setAttackResult] = useState<'success' | 'fail' | null>(null);
   const [crackedPassword, setCrackedPassword] = useState<string | null>(null);
   const { toast } = useToast();
+  
+  const [equivalentCommand, setEquivalentCommand] = useState<string>("");
 
   useEffect(() => {
     // Auto-start generation in daemon mode
@@ -68,6 +70,18 @@ export function AttackPanel({ network, isOpen, onClose, onSuccess, isDaemon = fa
           setTimeout(() => onSuccess(null), 1500);
       }
     } else {
+      // Create a temporary wordlist file for the command
+      const wordlistFileName = `temp_wordlist_${network.bssid.replace(/:/g, '')}.txt`;
+      setEquivalentCommand(
+`# 1. Capture WPA/WPA2 Handshake
+airodump-ng -c ${network.channel} --bssid ${network.bssid} -w capture wlan0mon
+
+# 2. Save AI candidates to a wordlist file
+echo "${result.passwordCandidates.join('\\n')}" > ${wordlistFileName}
+
+# 3. Run aircrack-ng with the AI-generated wordlist
+aircrack-ng -w ${wordlistFileName} -b ${network.bssid} capture-01.cap`
+      );
       setCandidates(result.passwordCandidates);
       if (isDaemon) {
         handleCrack(result.passwordCandidates);
@@ -90,8 +104,6 @@ export function AttackPanel({ network, isOpen, onClose, onSuccess, isDaemon = fa
     const steps = totalDuration / interval;
     let currentStep = 0;
     
-    // In a real scenario, this would be a loop trying each password.
-    // Here, we simulate the chance of success.
     const crackSucceeds = Math.random() < 0.20; // 20% chance of success
 
     const crackInterval = setInterval(() => {
@@ -123,6 +135,7 @@ export function AttackPanel({ network, isOpen, onClose, onSuccess, isDaemon = fa
     setCrackProgress(0);
     setCrackedPassword(null);
     setAttackResult(null);
+    setEquivalentCommand("");
     onClose();
   }
 
@@ -160,7 +173,7 @@ export function AttackPanel({ network, isOpen, onClose, onSuccess, isDaemon = fa
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && !isDaemon && resetState()}>
-      <DialogContent className="sm:max-w-[480px]">
+      <DialogContent className="sm:max-w-xl">
         <DialogHeader>
           <DialogTitle className="font-headline text-2xl">
             Attacking: {network.ssid}
@@ -231,6 +244,16 @@ export function AttackPanel({ network, isOpen, onClose, onSuccess, isDaemon = fa
                         </Badge>
                     ))}
                 </div>
+                
+                {equivalentCommand && (
+                <div className="space-y-2 pt-4">
+                    <h4 className="font-semibold flex items-center"><Terminal className="mr-2"/>Equivalent Terminal Commands</h4>
+                    <pre className="bg-black/80 rounded-md p-3 text-sm font-mono text-green-400 overflow-x-auto text-wrap">
+                        <code>{equivalentCommand}</code>
+                    </pre>
+                </div>
+                )}
+                
                 {!isDaemon ? renderCrackStatus() : (
                     isCracking ? (
                          <div className="space-y-2">
