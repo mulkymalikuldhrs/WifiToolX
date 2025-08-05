@@ -73,7 +73,6 @@ export function AttackPanel({ network, isOpen, onClose, onSuccess, isDaemon = fa
           setTimeout(() => onSuccess(null), 1500);
       }
     } else {
-      const wordlistFileName = `temp_wordlist_${network.bssid.replace(/:/g, '')}.txt`;
       const command = `crack_wpa "${network.bssid}" "${network.channel}" "${result.passwordCandidates.join(',')}"`;
       setEquivalentCommand(command);
       setCandidates(result.passwordCandidates);
@@ -161,7 +160,7 @@ export function AttackPanel({ network, isOpen, onClose, onSuccess, isDaemon = fa
       )
     }
     return (
-        <Button onClick={() => handleCrack(equivalentCommand, candidates)} className="w-full bg-accent hover:bg-accent/90" disabled={!equivalentCommand || !websocket}>
+        <Button onClick={() => handleCrack(equivalentCommand, candidates)} className="w-full bg-accent hover:bg-accent/90" disabled={!equivalentCommand || !websocket || candidates.length === 0}>
             <Zap className="mr-2"/>
             Execute Attack in Terminal
         </Button>

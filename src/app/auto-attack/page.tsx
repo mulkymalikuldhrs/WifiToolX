@@ -139,8 +139,13 @@ export default function AutoAttackPage() {
                 description: `Connected to ${connectedNetwork.ssid} in ${mode} mode.`,
             });
              if(ws.current && ws.current.readyState === WebSocket.OPEN) {
-                 addLog(`Requesting MITM mode for ${connectedNetwork.ssid}`);
-                 ws.current.send(`connect_mitm ${connectedNetwork.ssid}`);
+                 if (mode === 'mitm') {
+                    addLog(`Requesting MITM mode for ${connectedNetwork.ssid}`);
+                    ws.current.send(`connect_mitm ${connectedNetwork.ssid}`);
+                 } else {
+                    addLog(`Requesting regular connection for ${connectedNetwork.ssid}`);
+                    ws.current.send(`connect_regular ${connectedNetwork.ssid}`);
+                 }
              }
         }
         setIsModeDialogOpen(false);
