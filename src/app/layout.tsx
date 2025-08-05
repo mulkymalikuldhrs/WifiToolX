@@ -19,7 +19,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
-      <body className={cn("min-h-screen antialiased", fontBody.variable, fontHeadline.variable)}>
+      <body className={cn("min-h-screen antialiased font-body", fontHeadline.variable)}>
         {children}
         <Toaster />
       </body>
