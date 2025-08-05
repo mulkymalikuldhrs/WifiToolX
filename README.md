@@ -34,6 +34,10 @@ Aplikasi ini menggunakan arsitektur client-server yang cerdas:
 
 Komunikasi antara keduanya terjadi secara real-time melalui WebSockets.
 
+**Persyaratan Koneksi:**
+- **Pembuatan Kata Sandi (Online)**: Langkah pemanggilan AI untuk menghasilkan kandidat kata sandi memerlukan **koneksi internet** untuk berkomunikasi dengan layanan Google AI.
+- **Eksekusi Serangan (Offline)**: Eksekusi perintah di terminal lokal, logging, dan komunikasi antara UI dan server Python semuanya berjalan di `localhost` dan **tidak memerlukan koneksi internet**.
+
 ## 🔄 ALUR KERJA APLIKASI
 
 1.  **Inisialisasi**: Pengguna menjalankan server pengembangan terpadu dengan satu perintah.
@@ -43,7 +47,7 @@ Komunikasi antara keduanya terjadi secara real-time melalui WebSockets.
     *   Memilih target yang valid (terenkripsi dan belum pernah diserang).
     *   Membuka panel serangan.
 4.  **Serangan**:
-    *   Aplikasi web memanggil AI untuk menghasilkan kandidat kata sandi berdasarkan SSID target.
+    *   Aplikasi web memanggil AI untuk menghasilkan kandidat kata sandi berdasarkan SSID target (**memerlukan internet**).
     *   Perintah `crack_wpa` (atau yang setara) dikirim ke server terminal lokal melalui WebSocket.
 5.  **Hasil**:
     *   **Berhasil**: Jika terminal melaporkan keberhasilan, pengguna akan diminta untuk memilih mode koneksi (Regular/MITM). Daemon dijeda.

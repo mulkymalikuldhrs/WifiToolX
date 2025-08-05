@@ -37,6 +37,7 @@ export function SetupTutorial() {
                         <AccordionContent className="text-muted-foreground space-y-2">
                            <p>This web UI is a remote control. It sends commands to a Python server (`local_server.py`) running on your machine, which then executes real penetration testing tools.</p>
                            <p>The `npm run dev` command conveniently starts both the web UI and the Python server for you.</p>
+                           <p className="text-sm text-primary/80 pt-2">**Important:** AI password generation requires an **internet connection**. The actual attack execution runs **offline** on your local machine.</p>
                         </AccordionContent>
                     </AccordionItem>
                     <AccordionItem value="item-2">
