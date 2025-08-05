@@ -14,7 +14,8 @@ import { Button } from "./ui/button"
 export function SetupTutorial() {
     const { toast } = useToast()
     const installCommand = "npm install && pip install -r requirements.txt"
-    const runDevCommand = "npm run dev"
+    const runWebCommand = "npm run dev"
+    const runPythonCommand = "python3 local_server.py"
     
     const copyToClipboard = (text: string, label: string) => {
         navigator.clipboard.writeText(text);
@@ -36,7 +37,7 @@ export function SetupTutorial() {
                         <AccordionTrigger>Step 1: The Concept</AccordionTrigger>
                         <AccordionContent className="text-muted-foreground space-y-2">
                            <p>This web UI is a remote control. It sends commands to a Python server (`local_server.py`) running on your machine, which then executes real penetration testing tools.</p>
-                           <p>The `npm run dev` command conveniently starts both the web UI and the Python server for you.</p>
+                           <p>You need to run the Web UI and the Python server in two separate terminals.</p>
                            <p className="text-sm text-primary/80 pt-2">**Important:** AI password generation requires an **internet connection**. The actual attack execution runs **offline** on your local machine.</p>
                         </AccordionContent>
                     </AccordionItem>
@@ -53,10 +54,15 @@ export function SetupTutorial() {
                     <AccordionItem value="item-3">
                         <AccordionTrigger>Step 3: Run The Project</AccordionTrigger>
                         <AccordionContent className="space-y-4">
-                            <p className="text-muted-foreground">In a single terminal, run the unified development server:</p>
+                            <p className="text-muted-foreground">In your first terminal, run the web server:</p>
                             <div className="bg-black/50 rounded-md p-3 font-mono text-sm text-primary flex justify-between items-center">
-                                <code>{runDevCommand}</code>
-                                <Button size="icon" variant="ghost" onClick={() => copyToClipboard(runDevCommand, "Run dev command")}><Copy className="w-4 h-4"/></Button>
+                                <code>{runWebCommand}</code>
+                                <Button size="icon" variant="ghost" onClick={() => copyToClipboard(runWebCommand, "Run web server command")}><Copy className="w-4 h-4"/></Button>
+                             </div>
+                             <p className="text-muted-foreground">In your second terminal, run the Python local server:</p>
+                            <div className="bg-black/50 rounded-md p-3 font-mono text-sm text-primary flex justify-between items-center">
+                                <code>{runPythonCommand}</code>
+                                <Button size="icon" variant="ghost" onClick={() => copyToClipboard(runPythonCommand, "Run Python server command")}><Copy className="w-4 h-4"/></Button>
                              </div>
                              <p className="text-xs text-destructive/80">Warning: The local Python server executes commands directly on your machine. It is designed for educational purposes in a controlled environment. Do not expose it to untrusted networks.</p>
                         </AccordionContent>
@@ -64,7 +70,7 @@ export function SetupTutorial() {
                      <AccordionItem value="item-4">
                         <AccordionTrigger>Step 4: Start Attacking</AccordionTrigger>
                         <AccordionContent className="text-muted-foreground">
-                           Once the servers are running, click "Full Auto Attack" from the launcher. The UI will connect to your local server, and the daemon will begin its work. You'll see real-time output in the live log panel.
+                           Once both servers are running, click "Full Auto Attack" from the launcher. The UI will connect to your local server, and the daemon will begin its work. You'll see real-time output in the live log panel.
                         </AccordionContent>
                     </AccordionItem>
                 </Accordion>

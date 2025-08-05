@@ -22,7 +22,7 @@ Dibuat oleh: **Mulky Malikul Dhaher**
 | **Visualisasi Real-time**| Pantau jaringan yang ditemukan dan lihat log langsung dari terminal lokal Anda.    |
 | **Logging Persisten**    | Otomatis menyimpan log sesi dan kata sandi yang berhasil di direktori `logs/`.   |
 | **Alur Kerja Terintegrasi**  | Secara otomatis beralih ke target berikutnya jika serangan gagal, memastikan operasi berkelanjutan. |
-| **Penyiapan Terpadu**   | Server frontend dan backend lokal dijalankan secara bersamaan dengan satu perintah `npm run dev`. |
+| **Penyiapan Terpisah**   | Server frontend dan backend lokal dijalankan di terminal terpisah untuk stabilitas maksimum. |
 
 ---
 
@@ -40,7 +40,7 @@ Komunikasi antara keduanya terjadi secara real-time melalui WebSockets.
 
 ## 🔄 ALUR KERJA APLIKASI
 
-1.  **Inisialisasi**: Pengguna menjalankan server pengembangan terpadu dengan satu perintah.
+1.  **Inisialisasi**: Pengguna menjalankan server frontend dan backend di dua terminal terpisah.
 2.  **Koneksi**: Aplikasi web secara otomatis mencoba untuk terhubung ke server terminal lokal melalui WebSocket. Status koneksi ditampilkan di UI.
 3.  **Mulai Daemon**: Halaman "Auto Attack" memulai siklus daemon:
     *   Meminta daftar jaringan WiFi (dengan mengirimkan perintah simulasi atau nyata ke backend).
@@ -74,9 +74,16 @@ Untuk menjalankan proyek ini, Anda memerlukan Node.js dan Python 3 terinstal.
     ```
 
 3.  **Jalankan Proyek**:
-    Jalankan server pengembangan terpadu dengan satu perintah. Ini akan memulai server web Next.js dan server terminal Python secara bersamaan.
+    Anda perlu menjalankan server web dan server terminal di **dua terminal terpisah**.
+
+    **Di Terminal 1 (Untuk Web UI):**
     ```bash
     npm run dev
+    ```
+
+    **Di Terminal 2 (Untuk Server Lokal):**
+    ```bash
+    python3 local_server.py
     ```
 
 4.  **Buka Aplikasi**:
