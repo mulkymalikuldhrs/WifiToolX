@@ -165,7 +165,7 @@ export default function AutoAttackPage() {
       if (!isTerminalConnected) {
          return (
              <Card className="flex flex-col justify-center items-center py-10 text-center">
-                <Loader2 className="h-8 w-8 animate-spin text-accent" />
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
                 <p className="mt-4 text-muted-foreground">Waiting for connection to local terminal server...</p>
                 <p className="text-sm text-muted-foreground">Please start the python server on your machine.</p>
             </Card>
@@ -175,7 +175,7 @@ export default function AutoAttackPage() {
       if (isLoading) {
         return (
           <Card className="flex justify-center items-center py-10">
-              <Loader2 className="h-8 w-8 animate-spin text-accent" />
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
               <p className="ml-4 text-muted-foreground">Daemon initializing, performing first scan...</p>
           </Card>
         );
