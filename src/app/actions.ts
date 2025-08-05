@@ -4,8 +4,7 @@
 import {
   generatePasswordCandidates,
 } from '@/ai/flows/generate-password-candidates';
-import { cyberPentestChatbot } from '@/ai/flows/cyber-pentest-chatbot';
-import type { WifiNetwork, GeneratePasswordCandidatesInput, CyberPentestChatbotInput } from '@/lib/types';
+import type { WifiNetwork, GeneratePasswordCandidatesInput } from '@/lib/types';
 
 // This function simulates scanning for networks on the backend.
 function generateRealNetworks(existingNetworks: WifiNetwork[] = []): WifiNetwork[] {
@@ -93,20 +92,4 @@ export async function getPasswordCandidates(
     const errorMessage = e instanceof Error ? e.message : 'An unexpected error occurred.';
     return { error: `An error occurred while communicating with the AI: ${errorMessage}` };
   }
-}
-
-export async function getChatbotResponse(
-  input: CyberPentestChatbotInput
-): Promise<{ response: string } | { error: string }> {
-    if (!input.history || !input.message) {
-        return { error: 'Invalid input for chatbot.' };
-    }
-    try {
-        const result = await cyberPentestChatbot(input);
-        return { response: result.response };
-    } catch (e) {
-        console.error(e);
-        const errorMessage = e instanceof Error ? e.message : 'An unexpected error occurred.';
-        return { error: `AI chatbot failed to respond: ${errorMessage}` };
-    }
 }

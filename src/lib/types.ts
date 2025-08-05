@@ -39,26 +39,3 @@ export const GeneratePasswordCandidatesOutputSchema = z.object({
 export type GeneratePasswordCandidatesOutput = z.infer<
   typeof GeneratePasswordCandidatesOutputSchema
 >;
-
-
-// For cyber-pentest-chatbot flow
-export const ChatMessageSchema = z.object({
-  role: z.enum(['user', 'model']),
-  content: z.string(),
-});
-export type ChatMessage = z.infer<typeof ChatMessageSchema>;
-
-export const CyberPentestChatbotInputSchema = z.object({
-  history: z.array(ChatMessageSchema).describe("The conversation history."),
-  message: z.string().describe('The latest message from the user.'),
-});
-export type CyberPentestChatbotInput = z.infer<
-  typeof CyberPentestChatbotInputSchema
->;
-
-export const CyberPentestChatbotOutputSchema = z.object({
-  response: z.string().describe('The AI-generated response.'),
-});
-export type CyberPentestChatbotOutput = z.infer<
-  typeof CyberPentestChatbotOutputSchema
->;
