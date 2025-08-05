@@ -1,12 +1,14 @@
 import {genkit} from 'genkit';
-import {googleAI} from '@genkit-ai/googleai';
+import {openai} from 'genkitx-openai';
 
-const llm7 = googleAI.model('openai/gpt-4.1-nano-2025-04-14', {
-  apiKey: 'unused',
-  baseURL: 'https://api.llm7.io/v1',
-});
+const llm7 = openai.model('gpt-4.1-nano-2025-04-14');
 
 export const ai = genkit({
-  plugins: [googleAI()],
+  plugins: [
+    openai({
+      apiKey: 'unused',
+      baseURL: 'https://api.llm7.io/v1',
+    }),
+  ],
   model: llm7,
 });
