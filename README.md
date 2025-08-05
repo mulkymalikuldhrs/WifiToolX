@@ -22,7 +22,7 @@ Dibuat oleh: **Mulky Malikul Dhaher**
 | **Visualisasi Real-time**| Pantau jaringan yang ditemukan dan lihat log langsung dari terminal lokal Anda.    |
 | **Mode Koneksi Ganda**   | Setelah berhasil, pilih antara mode koneksi regular atau MITM (Man-in-the-Middle). |
 | **Alur Kerja Otomatis**  | Secara otomatis beralih ke target berikutnya jika serangan gagal, memastikan operasi berkelanjutan. |
-| **Penyiapan Terpadu**    | Server frontend dan backend lokal dapat dijalankan bersamaan dengan satu perintah (`npm run dev`). |
+| **Penyiapan Terpisah**   | Server frontend dan backend lokal dijalankan secara terpisah untuk stabilitas maksimum. |
 
 ---
 
@@ -36,7 +36,7 @@ Komunikasi antara keduanya terjadi secara real-time melalui WebSockets.
 
 ## 🔄 ALUR KERJA APLIKASI
 
-1.  **Inisialisasi**: Pengguna menjalankan `npm run dev`, yang memulai aplikasi web Next.js dan server terminal Python lokal secara bersamaan.
+1.  **Inisialisasi**: Pengguna menjalankan server Python dan server Next.js di dua terminal terpisah.
 2.  **Koneksi**: Aplikasi web secara otomatis mencoba untuk terhubung ke server terminal lokal melalui WebSocket. Status koneksi ditampilkan di UI.
 3.  **Mulai Daemon**: Setelah terhubung, halaman "Auto Attack" memulai siklus daemon:
     *   Meminta daftar jaringan WiFi (dengan mengirimkan perintah simulasi atau nyata ke backend).
@@ -62,23 +62,27 @@ Untuk menjalankan proyek ini, Anda memerlukan Node.js dan Python 3 terinstal.
     cd WifiToolX
     ```
 
-2.  **Install Dependensi Node.js**:
+2.  **Install Dependensi**:
+    Install dependensi Node.js dan Python.
     ```bash
     npm install
-    ```
-
-3.  **Install Dependensi Python**:
-    ```bash
     pip install -r requirements.txt
     ```
 
-4.  **Jalankan Proyek**:
-    Gunakan satu perintah ini untuk menjalankan server frontend dan backend secara bersamaan.
+3.  **Jalankan Proyek**:
+    Buka **dua terminal terpisah**.
+
+    Di terminal **pertama**, jalankan server web Next.js:
     ```bash
-    npm run dev
+    npm run dev:next
     ```
 
-5.  **Buka Aplikasi**:
-    Buka browser Anda dan navigasikan ke `http://localhost:9002` (atau port apa pun yang Anda konfigurasikan).
+    Di terminal **kedua**, jalankan server terminal Python:
+    ```bash
+    npm run dev:python
+    ```
+
+4.  **Buka Aplikasi**:
+    Buka browser Anda dan navigasikan ke `http://localhost:9002`.
 
 > **Peringatan Keamanan**: Server Python lokal (`local_server.py`) dirancang untuk tujuan pendidikan dan untuk digunakan dalam lingkungan yang terkendali dan tepercaya. **Jangan pernah** mengeksposnya ke jaringan yang tidak tepercaya karena dapat mengeksekusi perintah sewenang-wenang.
