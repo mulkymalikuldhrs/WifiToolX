@@ -55,7 +55,7 @@ export default function Home() {
       </div>
       <footer className="text-center mt-12 text-xs text-muted-foreground">
         <p>This application is intended for authorized security testing and educational purposes only.</p>
-        <p>Credit: Mulky Malikul Dhaher</p>
+        <p>Credit: <a href="https://github.com/mulkymalikuldhrs" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Mulky Malikul Dhaher</a>. View Project on <a href="https://github.com/mulkymalikuldhrs/WifiToolX" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">GitHub</a>.</p>
       </footer>
     </main>
   );

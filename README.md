@@ -7,7 +7,8 @@
 
 Aplikasi ini bertindak sebagai "pusat komando" untuk **daemon serangan otomatis**, yang secara mandiri memindai jaringan, memilih target, menggunakan AI untuk menghasilkan kata sandi potensial, dan mengirimkan perintah serangan nyata ke server terminal lokal melalui WebSocket.
 
-Dibuat oleh: **Mulky Malikul Dhaher**
+Dibuat oleh: **Mulky Malikul Dhaher** ([GitHub](https://github.com/mulkymalikuldhrs))  
+Source Code: [WiFiHunterX Repository](https://github.com/mulkymalikuldhrs/WifiToolX)
 
 ---
 
