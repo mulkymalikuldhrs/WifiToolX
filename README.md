@@ -48,7 +48,7 @@ Komunikasi antara keduanya terjadi secara real-time melalui WebSockets.
 5.  **Hasil**:
     *   **Berhasil**: Jika terminal melaporkan keberhasilan, pengguna akan diminta untuk memilih mode koneksi (Regular/MITM). Daemon dijeda.
     *   **Gagal**: Jika gagal, daemon akan menandai target sebagai sudah dicoba dan secara otomatis beralih ke target berikutnya.
-6.  **Logging**: Semua output dari terminal lokal ditampilkan secara real-time di antarmuka web.
+6.  **Logging**: Semua output dari terminal lokal ditampilkan secara real-time di antarmuka web, dan juga disimpan dalam file log sesi di mesin lokal Anda.
 
 ---
 

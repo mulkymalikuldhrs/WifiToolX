@@ -81,6 +81,7 @@ export default function AutoAttackPage() {
         const result = await getWifiNetworks(networks);
         if ('error' in result) {
             addLog(`Scan Error: ${result.error}`);
+            toast({ title: "Scan Error", description: result.error, variant: 'destructive' });
         } else {
             setNetworks(result.networks);
             addLog(`Scan complete. Found ${result.networks.length} networks.`);
@@ -142,10 +143,10 @@ export default function AutoAttackPage() {
              if(ws.current && ws.current.readyState === WebSocket.OPEN) {
                  if (mode === 'mitm') {
                     addLog(`Requesting MITM mode for ${connectedNetwork.ssid}`);
-                    ws.current.send(`connect_mitm ${connectedNetwork.ssid}`);
+                    ws.current.send(`connect_mitm "${connectedNetwork.ssid}"`);
                  } else {
                     addLog(`Requesting regular connection for ${connectedNetwork.ssid}`);
-                    ws.current.send(`connect_regular ${connectedNetwork.ssid}`);
+                    ws.current.send(`connect_regular "${connectedNetwork.ssid}"`);
                  }
              }
         }
@@ -190,7 +191,7 @@ export default function AutoAttackPage() {
         )
       }
 
-      return <NetworkList networks={networks} onAttack={() => {}} connectedSsid={connection.ssid}/>;
+      return <NetworkList networks={networks} onManualAttack={() => {}} attackedBssids={attackedBssids} connectedSsid={connection.ssid}/>;
     }
 
     return (
@@ -220,7 +221,7 @@ export default function AutoAttackPage() {
                     </CardHeader>
                     <CardContent>
                       <div ref={logContainerRef} className="h-[400px] bg-black/50 rounded-md p-3 text-sm font-mono text-green-400 overflow-y-auto border border-primary/20">
-                          {logs.map((log, i) => <p key={i} className="whitespace-pre-wrap leading-tight font-code">{log.startsWith('[TERMINAL]') ? <span className="text-cyan-400">{log}</span> : `> ${log}`}</p>)}
+                          {logs.map((log, i) => <p key={i} className="whitespace-pre-wrap break-all leading-tight font-code">{log.startsWith('[TERMINAL]') ? <span className="text-cyan-400">{log}</span> : `> ${log}`}</p>)}
                       </div>
                     </CardContent>
                 </Card>
