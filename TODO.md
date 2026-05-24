@@ -22,3 +22,9 @@ This file outlines the planned features and improvements for future releases.
 - [ ] **Secure the WebSocket**: Add a basic token or authentication mechanism to the `local_server.py` to prevent unauthorized connections if the port is accidentally exposed.
 - [ ] **Custom Wordlists**: Allow users to specify a path to their own wordlist file to be used in cracking attempts.
 - [ ] **Tool Detection**: Have the backend server check if required command-line tools (e.g., `aircrack-ng`) are installed on the host system and report their status to the UI.
+
+---
+
+> **Contact:** Mulky Malikul Dhaher — [mulkymalikuldhaher@email.com](mailto:mulkymalikuldhaher@email.com)
+>
+> **Disclaimer:** This project is for Education Purpose only. Risiko apapun tidak kita tanggung. (We are not responsible for any risks or damages.)

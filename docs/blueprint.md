@@ -65,3 +65,8 @@ Expansion untuk plugin exploit, phishing UI, analitik GPS, dan plugin AI.
 Proyek ini dirancang sebagai sistem lengkap, modular, dan mampu berkembang sesuai kebutuhan.  
 Sistem otomatis dan logging memastikan keberlanjutan operasi dan pengumpulan data yang lengkap.  
 Kendali penuh di tangan pengguna dan pengembang, dilengkapi dengan dokumentasi lengkap.
+---
+
+> **Contact:** Mulky Malikul Dhaher — [mulkymalikuldhaher@email.com](mailto:mulkymalikuldhaher@email.com)
+>
+> **Disclaimer:** This project is for Education Purpose only. Risiko apapun tidak kita tanggung. (We are not responsible for any risks or damages.)

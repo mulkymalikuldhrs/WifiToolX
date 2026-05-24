@@ -18,3 +18,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Integrated Development Environment**: Simplified `npm run dev` command to run both the Next.js frontend and the Python backend server concurrently.
 - **Full Project Documentation**: Comprehensive `README.md` including architecture overview, workflow, and setup instructions.
 - **Dependency Management**: Clear `package.json` for Node.js dependencies and `requirements.txt` for Python dependencies.
+
+---
+
+> **Contact:** Mulky Malikul Dhaher — [mulkymalikuldhaher@email.com](mailto:mulkymalikuldhaher@email.com)
+>
+> **Disclaimer:** This project is for Education Purpose only. Risiko apapun tidak kita tanggung. (We are not responsible for any risks or damages.)
