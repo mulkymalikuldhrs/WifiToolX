@@ -67,6 +67,12 @@ async def handler(websocket, path):
             # --- Command Handling ---
             if command == 'crack_wpa':
                 ssid = args[1] if len(args) > 1 else "unknown_ssid"
+                bssid = args[2] if len(args) > 2 else ""
+                capture_file = args[3] if len(args) > 3 else ""
+                
+                # TODO: Replace simulation with real aircrack-ng/hcxdumptool integration
+                # Example real flow: airodump-ng capture -> aircrack-ng with wordlist
+                # For now, this is a simulation placeholder
                 log_message(f"Initiating simulated WPA crack for SSID: {ssid}...")
                 
                 for progress in [25, 50, 75]:
@@ -74,8 +80,9 @@ async def handler(websocket, path):
                     log_message(f"Crack progress for {ssid}: {progress}%")
                     await asyncio.sleep(1)
 
-                if random.random() < 0.15: # 15% success chance
-                    password = "password123" 
+                if random.random() < 0.15: # 15% success chance (simulation)
+                    # TODO: In real implementation, password comes from aircrack-ng output
+                    password = "password123"  # Placeholder - never a real result
                     log_message(f"Simulated crack successful for {ssid}. Password: {password}", level="SUCCESS")
                     save_successful_password(ssid, password)
                     await websocket.send(f"CRACK_SUCCESS {password}")
@@ -86,6 +93,8 @@ async def handler(websocket, path):
             elif command in ['connect_regular', 'connect_mitm']:
                 ssid = args[1] if len(args) > 1 else "unknown network"
                 mode = "MITM" if command == 'connect_mitm' else "Regular"
+                # TODO: Replace simulation with real wifi connection commands
+                # Real: nmcli/wpa_supplicant for regular, hostapd/isc-dhcp-server for MITM
                 log_message(f"Simulating {mode} connection to {ssid}")
                 await websocket.send(f"Connection to {ssid} in {mode} mode established.")
 

@@ -6,8 +6,11 @@ import {
 } from '@/ai/flows/generate-password-candidates';
 import type { WifiNetwork, GeneratePasswordCandidatesInput } from '@/lib/types';
 
-// This function simulates scanning for networks on the backend.
-function generateRealNetworks(existingNetworks: WifiNetwork[] = []): WifiNetwork[] {
+// NOTE: This function simulates network scanning on the backend.
+// In a real deployment, this would call the local_server.py backend
+// which interfaces with actual WiFi hardware (iwlist, airodump-ng, etc.)
+// For now, simulation is used for demonstration purposes.
+function simulateNetworkScan(existingNetworks: WifiNetwork[] = []): WifiNetwork[] {
   const commonSsids = [
     'xfinitywifi', 'NETGEAR', 'linksys', 'dlink', 'CenturyLink', 'TP-Link_Guest',
     'MySpectrumWiFi', 'CoxWiFi', 'ASUS', 'Google_Home', 'Starbucks WiFi',
@@ -65,7 +68,7 @@ export async function getWifiNetworks(
   currentNetworks: WifiNetwork[]
 ): Promise<{ networks: WifiNetwork[] } | { error: string }> {
    try {
-    const networks = generateRealNetworks(currentNetworks);
+    const networks = simulateNetworkScan(currentNetworks);
     return { networks };
   } catch (e) {
     console.error(e);
