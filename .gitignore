@@ -23,6 +23,9 @@
 # misc
 .DS_Store
 *.pem
+img.png
+.img.png
+.modified
 
 # debug
 npm-debug.log*
@@ -43,3 +46,18 @@ next-env.d.ts
 # firebase
 firebase-debug.log
 firestore-debug.log
+
+# Sensitive
+*.db
+*.key
+*.sqlite
+credentials*
+.git-credentials
+~/
+
+# IDE
+.vscode/
+.idea/
+
+# Nix
+.idx/
